@@ -5,7 +5,7 @@ import { SetupConfigService, SetupSection, SetupItem } from '../../services/setu
 @Component({
   selector: 'app-setup-organization',
   templateUrl: './setup-organization.component.html',
-  styleUrls: ['./setup-organization.component.scss']
+  styleUrls: ['./setup-organization.component.css']
 })
 export class SetupOrganizationComponent implements OnInit {
   setupSections: SetupSection[] = [];
