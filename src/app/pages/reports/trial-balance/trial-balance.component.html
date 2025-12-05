@@ -1,0 +1,95 @@
+<div class="trial-balance-container">
+  <div class="reports-header">
+    <h1>Trial Balance</h1>
+    <div class="header-actions">
+      <button class="btn btn-primary" (click)="exportToCSV()">
+        <i class="fas fa-download"></i> Export CSV
+      </button>
+      <button class="btn btn-secondary" (click)="printReport()">
+        <i class="fas fa-print"></i> Print
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-section">
+    <h3>Filters</h3>
+    <div class="filters-grid">
+      <div class="filter-group" *ngFor="let field of filterFields">
+        <label>{{ field.label }}</label>
+        <div [ngSwitch]="field.fieldtype">
+          <!-- Select Field -->
+          <select
+            *ngSwitchCase="'Select'"
+            [ngModel]="getFilterValue(field.fieldname)"
+            (change)="onFilterFieldChange(field.fieldname, $event)"
+            class="form-control"
+          >
+            <option *ngFor="let opt of field.options" [value]="opt.value">
+              {{ opt.label }}
+            </option>
+          </select>
+
+          <!-- Text Field -->
+          <input
+            *ngSwitchCase="'Text'"
+            type="text"
+            [ngModel]="getFilterValue(field.fieldname)"
+            (change)="onFilterFieldChange(field.fieldname, $event)"
+            [placeholder]="field.placeholder"
+            class="form-control"
+          />
+
+          <!-- Date Field -->
+          <input
+            *ngSwitchCase="'Date'"
+            type="date"
+            [ngModel]="getFilterValue(field.fieldname)"
+            (change)="onFilterFieldChange(field.fieldname, $event)"
+            class="form-control"
+          />
+
+          <!-- Checkbox Field -->
+          <input
+            *ngSwitchCase="'Checkbox'"
+            type="checkbox"
+            [ngModel]="getFilterValue(field.fieldname)"
+            (change)="onFilterFieldChange(field.fieldname, $event)"
+            class="form-checkbox"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Report Table -->
+  <div class="report-section">
+    <div *ngIf="isLoading" class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Loading report...</p>
+    </div>
+
+    <div *ngIf="!isLoading && report" class="report-table-wrapper">
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th *ngFor="let col of report.columns" [style.width]="col.width ? col.width + 'rem' : 'auto'" [style.text-align]="col.align || 'left'">
+              {{ col.label }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of report.data" [ngClass]="{'bold-row': row.cells[0]?.bold, 'italic-row': row.cells[0]?.italics, 'empty-row': row.isEmpty}">
+            <td *ngFor="let cell of row.cells; let last = last" [style.width]="cell.width ? cell.width + 'rem' : 'auto'" [style.text-align]="cell.align || 'left'" [ngClass]="{'bold': cell.bold, 'italic': cell.italics}">
+              {{ cell.value }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="!isLoading && !report" class="no-data-message">
+      <p>No report data available</p>
+    </div>
+  </div>
+</div>

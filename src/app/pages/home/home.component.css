@@ -1,0 +1,378 @@
+.home-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 40px 20px;
+}
+
+.home-header {
+  max-width: 1200px;
+  margin: 0 auto 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+}
+
+.header-content h1 {
+  margin: 0;
+  font-size: 42px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.header-content p {
+  margin: 0;
+  font-size: 18px;
+  opacity: 0.9;
+}
+
+.btn-new-company {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid white;
+  color: white;
+  padding: 12px 25px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-new-company:hover {
+  background: white;
+  color: #667eea;
+  transform: translateY(-2px);
+}
+
+.btn-new-company i {
+  font-size: 16px;
+}
+
+/* Empty State */
+.empty-state {
+  max-width: 500px;
+  margin: 80px auto;
+  text-align: center;
+  color: white;
+}
+
+.empty-icon {
+  font-size: 80px;
+  opacity: 0.3;
+  margin-bottom: 30px;
+}
+
+.empty-state h2 {
+  margin: 0 0 15px 0;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.empty-state p {
+  margin: 0 0 40px 0;
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+.btn-primary-lg {
+  background: white;
+  color: #667eea;
+  padding: 14px 40px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary-lg:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Companies Section */
+.companies-section {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.companies-section h2 {
+  color: white;
+  margin: 0 0 30px 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.companies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.company-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.company-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+}
+
+.current-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 10;
+}
+
+.card-content {
+  padding: 30px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.company-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.company-info {
+  flex: 1;
+}
+
+.company-info h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.company-info p {
+  margin: 6px 0 0 0;
+  font-size: 13px;
+  color: #999;
+}
+
+.company-info p.email {
+  color: #666;
+  font-size: 12px;
+}
+
+.company-info p.country {
+  color: #667eea;
+  font-weight: 500;
+}
+
+.company-info p i {
+  margin-right: 4px;
+}
+
+.card-footer {
+  display: flex;
+  gap: 10px;
+  padding: 15px 30px;
+  border-top: 1px solid #f0f0f0;
+  background: #f8f9fa;
+}
+
+.btn-open {
+  flex: 1;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-open:hover {
+  opacity: 0.9;
+}
+
+.btn-delete {
+  background: #ffebee;
+  color: #f44336;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-delete:hover {
+  background: #f44336;
+  color: white;
+}
+
+/* New Company Card */
+.new-company-card {
+  border: 2px dashed #667eea;
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.new-company-card:hover {
+  background: rgba(102, 126, 234, 0.1);
+  border-color: #764ba2;
+}
+
+.new-company-card .card-content {
+  justify-content: center;
+}
+
+.new-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #667eea;
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.new-company-card .company-info {
+  text-align: center;
+}
+
+.new-company-card .company-info h3 {
+  color: #667eea;
+}
+
+.new-company-card .card-footer {
+  display: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .home-container {
+    padding: 20px 15px;
+  }
+
+  .home-header {
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 40px;
+    text-align: center;
+  }
+
+  .header-content h1 {
+    font-size: 32px;
+  }
+
+  .btn-new-company {
+    align-self: center;
+  }
+
+  .companies-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-content {
+    padding: 20px;
+  }
+
+  .company-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+  }
+
+  .company-info h3 {
+    font-size: 16px;
+  }
+
+  .empty-state {
+    margin: 40px auto;
+  }
+
+  .empty-icon {
+    font-size: 60px;
+    margin-bottom: 20px;
+  }
+
+  .empty-state h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-container {
+    padding: 15px 10px;
+  }
+
+  .header-content h1 {
+    font-size: 24px;
+  }
+
+  .header-content p {
+    font-size: 14px;
+  }
+
+  .companies-section h2 {
+    font-size: 20px;
+  }
+
+  .card-content {
+    gap: 15px;
+  }
+
+  .company-info p {
+    font-size: 12px;
+  }
+
+  .btn-open {
+    font-size: 11px;
+  }
+
+  .btn-delete {
+    width: 35px;
+    height: 35px;
+    font-size: 12px;
+  }
+}

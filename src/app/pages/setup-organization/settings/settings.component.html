@@ -1,0 +1,753 @@
+<div class="settings-page">
+  <!-- Header Section -->
+  <div class="settings-header">
+    <div class="header-content">
+      <h1>General</h1>
+      <div class="header-actions">
+        <button class="btn-settings">Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs Navigation -->
+  <div class="tabs-navigation">
+    <button class="tab-item" [class.active]="activeTab === 'general'" (click)="setActiveTab('general')">General</button>
+    <button class="tab-item" [class.active]="activeTab === 'defaults'" (click)="setActiveTab('defaults')">Defaults</button>
+    <button class="tab-item" [class.active]="activeTab === 'print'" (click)="setActiveTab('print')">Print</button>
+    <button class="tab-item" [class.active]="activeTab === 'system'" (click)="setActiveTab('system')">System</button>
+  </div>
+
+  <!-- Main Content -->
+  <div class="settings-content">
+    <!-- General Tab -->
+    <div class="tab-pane" *ngIf="activeTab === 'general'">
+      <!-- General Section -->
+      <div class="settings-section">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input 
+              type="text" 
+              [(ngModel)]="settings.fullname" 
+              class="form-input" 
+              placeholder="Full Name"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Company Name</label>
+            <input 
+              type="text" 
+              [(ngModel)]="settings.companyName" 
+              class="form-input" 
+              placeholder="Company Name"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Bank Name</label>
+            <input 
+              type="text" 
+              [(ngModel)]="settings.bankName" 
+              class="form-input" 
+              placeholder="Bank Name"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Country</label>
+            <select [(ngModel)]="settings.country" class="form-input">
+              <option value="">Select Country</option>
+              <option *ngFor="let country of countries" [value]="country">{{ country }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Email</label>
+            <input 
+              type="email" 
+              [(ngModel)]="settings.email" 
+              class="form-input" 
+              placeholder="Email"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>GSTIN</label>
+            <input 
+              type="text" 
+              [(ngModel)]="settings.gstNumber" 
+              class="form-input" 
+              placeholder="GSTIN"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Accounts Section -->
+      <div class="settings-section collapsible">
+        <div class="section-header" (click)="toggleSection('accounts')">
+          <h3>Accounts</h3>
+          <span class="collapse-icon">⌄</span>
+        </div>
+
+        <div class="accounts-grid">
+          <div class="account-item">
+            <label>Write Off Account</label>
+            <div class="account-value">
+              <span>Write Off</span>
+              <span class="arrow">></span>
+            </div>
+          </div>
+
+          <div class="account-item">
+            <label>Round Off Account</label>
+            <div class="account-value">
+              <span>Rounded Off</span>
+              <span class="arrow">></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Features Section -->
+      <div class="settings-section collapsible">
+        <div class="section-header" (click)="toggleSection('features')">
+          <h3>Features</h3>
+          <span class="collapse-icon">⌄</span>
+        </div>
+
+        <div class="features-grid">
+          <div class="feature-item">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.enableDiscounting" 
+                class="feature-checkbox"
+              />
+              <span>Enable Discount Accounting</span>
+            </label>
+          </div>
+
+          <div class="feature-item">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.enableInventory" 
+                class="feature-checkbox"
+              />
+              <span>Enable Inventory</span>
+            </label>
+          </div>
+
+          <div class="feature-item">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.enablePriceList" 
+                class="feature-checkbox"
+              />
+              <span>Enable Price List</span>
+            </label>
+          </div>
+
+          <div class="feature-item">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.enableInvoiceReturns" 
+                class="feature-checkbox"
+              />
+              <span>Enable Invoice Returns</span>
+            </label>
+          </div>
+
+          <div class="feature-item">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.enableFormCustomization" 
+                class="feature-checkbox"
+              />
+              <span>Enable Form Customization</span>
+            </label>
+          </div>
+
+          <div class="feature-item">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.enableERPNextSync" 
+                class="feature-checkbox"
+              />
+              <span>Enable ERPNext Sync</span>
+            </label>
+          </div>
+
+          <div class="feature-item">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.enableLead" 
+                class="feature-checkbox"
+              />
+              <span>Enable Lead</span>
+            </label>
+          </div>
+
+          <div class="feature-item">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.enableItemEnquiry" 
+                class="feature-checkbox"
+              />
+              <span>Enable Item Enquiry</span>
+            </label>
+          </div>
+
+          <div class="feature-item">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.enableLoyaltyProgram" 
+                class="feature-checkbox"
+              />
+              <span>Enable Loyalty Program</span>
+            </label>
+          </div>
+
+          <div class="feature-item">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.enablePointOfSaleWithOutInventory" 
+                class="feature-checkbox"
+              />
+              <span>Enable POS Without Inventory</span>
+            </label>
+          </div>
+
+          <div class="feature-item">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.enableitemGroup" 
+                class="feature-checkbox"
+              />
+              <span>Enable Item Group</span>
+            </label>
+          </div>
+
+          <div class="feature-item">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.enablePartialPayment" 
+                class="feature-checkbox"
+              />
+              <span>Enable Partial Payment</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fiscal Year Section -->
+      <div class="settings-section collapsible">
+        <div class="section-header" (click)="toggleSection('fiscal')">
+          <h3>Fiscal Year</h3>
+          <span class="collapse-icon">⌄</span>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Fiscal Year Start Date</label>
+            <input 
+              type="date" 
+              [(ngModel)]="settings.fiscalYearStart" 
+              class="form-input"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Fiscal Year End Date</label>
+            <input 
+              type="date" 
+              [(ngModel)]="settings.fiscalYearEnd" 
+              class="form-input"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Defaults Tab -->
+    <div class="tab-pane" *ngIf="activeTab === 'defaults'">
+      <!-- Auto Payments Section -->
+      <div class="settings-section collapsible">
+        <div class="section-header" (click)="toggleSection('autoPayments')">
+          <h3>Auto Payments</h3>
+          <span class="collapse-icon">⌄</span>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Sales Payment Account</label>
+            <select class="form-input">
+              <option>Sales Payment Account</option>
+              <option>Account 1</option>
+              <option>Account 2</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Purchase Payment Account</label>
+            <select class="form-input">
+              <option>Purchase Payment Account</option>
+              <option>Account 1</option>
+              <option>Account 2</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Auto Stock Transfer Section -->
+      <div class="settings-section collapsible">
+        <div class="section-header" (click)="toggleSection('autoStockTransfer')">
+          <h3>Auto Stock Transfer</h3>
+          <span class="collapse-icon">⌄</span>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Shipment Location</label>
+            <select class="form-input">
+              <option>Shipment Location</option>
+              <option>Location 1</option>
+              <option>Location 2</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Purchase Receipt Location</label>
+            <select class="form-input">
+              <option>Purchase Receipt Location</option>
+              <option>Location 1</option>
+              <option>Location 2</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Number Series Section -->
+      <div class="settings-section collapsible">
+        <div class="section-header" (click)="toggleSection('numberSeries')">
+          <h3>Number Series</h3>
+          <span class="collapse-icon">⌄</span>
+        </div>
+
+        <div class="number-series-grid">
+          <div class="form-group">
+            <label>Sales Invoice Number Series</label>
+            <div class="series-input-group">
+              <input type="text" class="form-input series-input" placeholder="SINV-" value="SINV-" readonly />
+              <span class="series-arrow">></span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Purchase Invoice Number Series</label>
+            <div class="series-input-group">
+              <input type="text" class="form-input series-input" placeholder="PINV-" value="PINV-" readonly />
+              <span class="series-arrow">></span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Journal Entry Number Series</label>
+            <div class="series-input-group">
+              <input type="text" class="form-input series-input" placeholder="JV-" value="JV-" readonly />
+              <span class="series-arrow">></span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Payment Number Series</label>
+            <div class="series-input-group">
+              <input type="text" class="form-input series-input" placeholder="PAY-" value="PAY-" readonly />
+              <span class="series-arrow">></span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Sales Quote Number Series</label>
+            <div class="series-input-group">
+              <input type="text" class="form-input series-input" placeholder="SQUOT-" value="SQUOT-" readonly />
+              <span class="series-arrow">></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Terms Section -->
+      <div class="settings-section collapsible">
+        <div class="section-header" (click)="toggleSection('terms')">
+          <h3>Terms</h3>
+          <span class="collapse-icon">⌄</span>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Sales Invoice Terms</label>
+            <textarea class="form-input terms-textarea" placeholder="Sales Invoice Terms"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Purchase Invoice Terms</label>
+            <textarea class="form-input terms-textarea" placeholder="Purchase Invoice Terms"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Print Templates Section -->
+      <div class="settings-section collapsible">
+        <div class="section-header" (click)="toggleSection('printTemplates')">
+          <h3>Print Templates</h3>
+          <span class="collapse-icon">⌄</span>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Sales Quote Print Template</label>
+            <div class="template-input-group">
+              <input type="text" class="form-input" placeholder="Business - Quote" value="Business - Quote" readonly />
+              <span class="template-arrow">></span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Sales Invoice Print Template</label>
+            <div class="template-input-group">
+              <input type="text" class="form-input" placeholder="Business - Sales Invoice" value="Business - Sales Invoice" readonly />
+              <span class="template-arrow">></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Print Tab -->
+    <div class="tab-pane" *ngIf="activeTab === 'print'">
+      <!-- Logo Preview Section -->
+      <div class="logo-preview-section">
+        <div class="logo-placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <polyline points="21 15 16 10 5 21"></polyline>
+          </svg>
+        </div>
+
+        <div class="company-info-section">
+          <div class="form-group">
+            <label>Company Name</label>
+            <input 
+              type="text" 
+              [(ngModel)]="settings.companyName" 
+              class="form-input" 
+              placeholder="Company Name"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Contacts Section -->
+      <div class="settings-section collapsible">
+        <div class="section-header" (click)="toggleSection('contacts')">
+          <h3>Contacts</h3>
+          <span class="collapse-icon">⌄</span>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Email</label>
+            <input 
+              type="email" 
+              [(ngModel)]="settings.email" 
+              class="form-input" 
+              placeholder="Email"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Phone</label>
+            <input 
+              type="tel" 
+              [(ngModel)]="settings.phone" 
+              class="form-input" 
+              placeholder="Phone"
+            />
+          </div>
+
+          <div class="form-group full-width">
+            <label>Address</label>
+            <select class="form-input">
+              <option>Address</option>
+              <option>Address 1</option>
+              <option>Address 2</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customizations Section -->
+      <div class="settings-section collapsible">
+        <div class="section-header" (click)="toggleSection('customizations')">
+          <h3>Customizations</h3>
+          <span class="collapse-icon">⌄</span>
+        </div>
+
+        <div class="customizations-grid">
+          <div class="form-group">
+            <label>Color</label>
+            <div class="color-selector">
+              <input 
+                type="color" 
+                [(ngModel)]="settings.printColor" 
+                class="color-input"
+                value="#000000"
+              />
+              <span class="color-label">Black</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Font</label>
+            <select [(ngModel)]="settings.printFont" class="form-input">
+              <option value="Arial">Arial</option>
+              <option value="Times New Roman">Times New Roman</option>
+              <option value="Courier New">Courier New</option>
+              <option value="Verdana">Verdana</option>
+            </select>
+          </div>
+
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.displayLogoInInvoice" 
+                class="feature-checkbox"
+              />
+              <span>Display Logo In Invoice</span>
+            </label>
+          </div>
+
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.displayAmountInWords" 
+                class="feature-checkbox"
+              />
+              <span>Display Amount In Words</span>
+            </label>
+          </div>
+
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.displayTimeInInvoice" 
+                class="feature-checkbox"
+              />
+              <span>Display Time In Invoice</span>
+            </label>
+          </div>
+
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.displayDescriptionInInvoice" 
+                class="feature-checkbox"
+              />
+              <span>Display Description In Invoice</span>
+            </label>
+          </div>
+
+          <div class="checkbox-group full-width">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.displayTermsAndConditions" 
+                class="feature-checkbox"
+              />
+              <span>Display Terms and Conditions</span>
+            </label>
+          </div>
+
+          <div class="form-group full-width">
+            <label>Pos Print Width</label>
+            <input 
+              type="number" 
+              [(ngModel)]="settings.posPrintWidth" 
+              class="form-input" 
+              placeholder="Width in characters"
+              min="1"
+              max="200"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" *ngIf="activeTab === 'system'">
+      <!-- Date Format and Version Section -->
+      <div class="settings-section">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Date Format</label>
+            <input 
+              type="text" 
+              [(ngModel)]="settings.dateFormat" 
+              class="form-input" 
+              placeholder="Date Format"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Version</label>
+            <input 
+              type="text" 
+              [(ngModel)]="settings.version" 
+              class="form-input" 
+              placeholder="Version"
+            />
+          </div>
+        </div>
+
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              [(ngModel)]="settings.removeFilter" 
+              class="form-checkbox"
+            />
+            <span>Remove Filter</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Number Display Section -->
+      <div class="settings-section collapsible">
+        <div class="section-header" (click)="toggleSection('numberDisplay')">
+          <h3>Number Display</h3>
+          <span class="collapse-icon">⌄</span>
+        </div>
+        <div class="section-content">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Locale</label>
+              <select 
+                [(ngModel)]="settings.locale" 
+                class="form-input"
+              >
+                <option value="India (en-IN)">India (en-IN)</option>
+                <option value="United States (en-US)">United States (en-US)</option>
+                <option value="United Kingdom (en-GB)">United Kingdom (en-GB)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Display Precision</label>
+              <input 
+                type="number" 
+                [(ngModel)]="settings.displayPrecision" 
+                class="form-input" 
+                placeholder="Display Precision"
+                min="0"
+                max="10"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Currency</label>
+              <input 
+                type="text" 
+                [(ngModel)]="settings.currency" 
+                class="form-input" 
+                placeholder="Currency"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Theme Section -->
+      <div class="settings-section collapsible">
+        <div class="section-header" (click)="toggleSection('theme')">
+          <h3>Theme</h3>
+          <span class="collapse-icon">⌄</span>
+        </div>
+        <div class="section-content">
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.darkMode" 
+                class="form-checkbox"
+              />
+              <span>Dark mode</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customizations Section -->
+      <div class="settings-section collapsible">
+        <div class="section-header" (click)="toggleSection('customizations')">
+          <h3>Customizations</h3>
+          <span class="collapse-icon">⌄</span>
+        </div>
+        <div class="section-content">
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.hideGetStarted" 
+                class="form-checkbox"
+              />
+              <span>Hide Get Started</span>
+            </label>
+
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.allowBypassFilters" 
+                class="form-checkbox"
+              />
+              <span>Allow to bypass filters</span>
+            </label>
+
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="settings.displayTermsAndConditionsSystem" 
+                class="form-checkbox"
+              />
+              <span>Display Terms and Conditions</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success/Error Messages -->
+  <div class="message" *ngIf="saveMessage" [class.success]="true">
+    {{ saveMessage }}
+  </div>
+  <div class="message" *ngIf="saveError" [class.error]="true">
+    {{ saveError }}
+  </div>
+</div>

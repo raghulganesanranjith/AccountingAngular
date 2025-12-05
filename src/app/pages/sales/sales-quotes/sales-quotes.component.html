@@ -1,0 +1,278 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Sales Quotes</h1>
+    <button class="btn-primary" (click)="createNewQuote()">
+      <i class="fas fa-plus"></i> New Quote
+    </button>
+  </div>
+
+  <div class="page-content">
+    <!-- Quotes List -->
+    <div class="quotes-list" *ngIf="!showForm && (quotes$ | async) as quotes">
+      <div *ngIf="quotes.length === 0" class="empty-state">
+        <i class="fas fa-file-alt"></i>
+        <h2>No Quotes Yet</h2>
+        <p>Create your first sales quote</p>
+        <button class="btn-primary" (click)="createNewQuote()">
+          <i class="fas fa-plus"></i> Create Quote
+        </button>
+      </div>
+
+      <div *ngIf="quotes.length > 0" class="table-wrapper">
+        <table class="quotes-table">
+          <thead>
+            <tr>
+              <th>Quote #</th>
+              <th>Customer</th>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Valid To</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let quote of quotes" [class.quote-row]="true" [class.demo-row]="quote.id.includes('demo')" (click)="editQuote(quote)" class="clickable-row">
+              <td>
+                <strong>{{ quote.quoteNumber }}</strong>
+                <span *ngIf="quote.id.includes('demo')" class="demo-badge-inline">DEMO</span>
+              </td>
+              <td>{{ quote.customer.name }}</td>
+              <td>{{ quote.date | date: 'dd/MM/yyyy' }}</td>
+              <td class="amount">{{ quote.grandTotal | currency }}</td>
+              <td>
+                <span class="badge" [ngClass]="'badge-' + quote.status.toLowerCase()">
+                  {{ quote.status }}
+                </span>
+              </td>
+              <td>{{ quote.validTo | date: 'dd/MM/yyyy' }}</td>
+              <td class="actions">
+                <button class="btn-icon" (click)="viewQuote(quote); $event.stopPropagation()" title="View">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn-icon" (click)="editQuote(quote); $event.stopPropagation()" title="Edit">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-icon btn-danger" (click)="deleteQuote(quote); $event.stopPropagation()" title="Delete">
+                  <i class="fas fa-trash"></i>
+                </button>
+                <button class="btn-icon btn-success" (click)="makeInvoiceFromQuote(quote); $event.stopPropagation()" title="Make Invoice">
+                  <i class="fas fa-file-invoice"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Quote Form -->
+    <div class="quote-form" *ngIf="showForm">
+      <div class="form-header">
+        <h2>{{ formTitle }}</h2>
+        <button class="btn-close" (click)="closeForm()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <form (ngSubmit)="saveQuote()" class="form-content">
+        <!-- Quote Details -->
+        <div class="form-section">
+          <h3>Quote Details</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Quote Number</label>
+              <input type="text" [(ngModel)]="formData.quoteNumber" name="quoteNumber" placeholder="Auto-generated">
+            </div>
+            <div class="form-group">
+              <label>Date</label>
+              <input type="date" [(ngModel)]="formData.date" name="date" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Customer *</label>
+              <select [(ngModel)]="formData.customer" name="customer" required>
+                <option value="">Select Customer</option>
+                <option *ngFor="let c of mockCustomers" [value]="c.id">
+                  {{ c.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Items Section -->
+        <div class="form-section">
+          <div class="section-header">
+            <h3>Items</h3>
+            <button type="button" class="btn-secondary" (click)="addItemToQuote()">
+              <i class="fas fa-plus"></i> Add Item
+            </button>
+          </div>
+
+          <div *ngIf="formData.items.length === 0" class="no-items">
+            <p>No items added yet. Click "Add Item" to get started.</p>
+          </div>
+
+          <div *ngFor="let item of formData.items; let i = index" class="item-row">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Item Name</label>
+                <select [(ngModel)]="item.itemName" [name]="'itemName_' + i">
+                  <option value="">Select Item</option>
+                  <option *ngFor="let mockItem of mockItems" [value]="mockItem.name">
+                    {{ mockItem.name }}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Description</label>
+                <input type="text" [(ngModel)]="item.description" [name]="'desc_' + i">
+              </div>
+              <div class="form-group">
+                <label>Quantity</label>
+                <input type="number" [(ngModel)]="item.quantity" [name]="'qty_' + i" 
+                       (change)="updateItemAmount(i)" min="1">
+              </div>
+              <div class="form-group">
+                <label>Unit Price</label>
+                <input type="number" [(ngModel)]="item.unitPrice" [name]="'price_' + i" 
+                       (change)="updateItemAmount(i)" min="0" step="0.01">
+              </div>
+              <div class="form-group">
+                <label>Amount</label>
+                <input type="number" [value]="item.amount" disabled class="readonly">
+              </div>
+              <div class="form-group action">
+                <button type="button" class="btn-icon btn-danger" (click)="removeItemFromQuote(i)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Validity Period -->
+        <div class="form-section">
+          <h3>Validity Period</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Valid From</label>
+              <input type="date" [(ngModel)]="formData.validFrom" name="validFrom">
+            </div>
+            <div class="form-group">
+              <label>Valid To</label>
+              <input type="date" [(ngModel)]="formData.validTo" name="validTo">
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="form-section">
+          <div class="form-group">
+            <label>Notes</label>
+            <textarea [(ngModel)]="formData.notes" name="notes" rows="3" 
+                      placeholder="Add any additional notes or terms..."></textarea>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="closeForm()">Cancel</button>
+          <button type="submit" class="btn-primary">
+            <i class="fas fa-save"></i> Save Quote
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Quote View Modal -->
+  <div *ngIf="showModal && (selectedQuote$ | async) as quote" class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Quote Details - {{ quote.quoteNumber }}</h2>
+        <button class="btn-close" (click)="closeModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="quote-detail-grid">
+          <div class="detail-item">
+            <label>Quote Number:</label>
+            <span>{{ quote.quoteNumber }}</span>
+          </div>
+          <div class="detail-item">
+            <label>Date:</label>
+            <span>{{ quote.date | date: 'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="detail-item">
+            <label>Customer:</label>
+            <span>{{ quote.customer.name }}</span>
+          </div>
+          <div class="detail-item">
+            <label>Status:</label>
+            <span class="badge" [ngClass]="'badge-' + quote.status.toLowerCase()">
+              {{ quote.status }}
+            </span>
+          </div>
+        </div>
+
+        <div class="items-detail">
+          <h3>Items</h3>
+          <table class="detail-table">
+            <thead>
+              <tr>
+                <th>Item Name</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of quote.items">
+                <td>{{ item.itemName }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.unitPrice | currency }}</td>
+                <td>{{ item.amount | currency }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="totals">
+          <div class="total-row">
+            <label>Subtotal:</label>
+            <span>{{ quote.subtotal | currency }}</span>
+          </div>
+          <div class="total-row">
+            <label>Tax (10%):</label>
+            <span>{{ quote.tax | currency }}</span>
+          </div>
+          <div class="total-row grand-total">
+            <label>Grand Total:</label>
+            <span>{{ quote.grandTotal | currency }}</span>
+          </div>
+        </div>
+
+        <div *ngIf="quote.notes" class="notes-section">
+          <h3>Notes</h3>
+          <p>{{ quote.notes }}</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="closeModal()">Close</button>
+        <button *ngIf="quote.status === 'Draft'" type="button" class="btn-success" (click)="submitQuote(quote)">
+          <i class="fas fa-check"></i> Submit
+        </button>
+        <button *ngIf="quote.status !== 'Rejected'" type="button" class="btn-primary" (click)="makeInvoiceFromQuote(quote)">
+          <i class="fas fa-file-invoice"></i> Make Invoice
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

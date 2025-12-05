@@ -1,0 +1,295 @@
+<div class="purchase-payments-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <h1>Purchase Payments</h1>
+      <p>Track and manage payment transactions to suppliers</p>
+    </div>
+    <button class="btn-add" (click)="openForm()">+ Record Payment</button>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+        <i class="fas fa-wallet"></i>
+      </div>
+      <div class="stat-content">
+        <h3>Total Payments</h3>
+        <p class="stat-value">{{ (payments$ | async)?.length || 0 }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+        <i class="fas fa-money-bill-wave"></i>
+      </div>
+      <div class="stat-content">
+        <h3>Total Amount</h3>
+        <p class="stat-value">₹{{ getTotalPayments() | number:'1.2-2' }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <div class="stat-content">
+        <h3>Completed</h3>
+        <p class="stat-value">₹{{ getCompletedPayments() | number:'1.2-2' }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a, #fee140);">
+        <i class="fas fa-clock"></i>
+      </div>
+      <div class="stat-content">
+        <h3>Pending</h3>
+        <p class="stat-value">₹{{ getPendingPayments() | number:'1.2-2' }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search & Filter -->
+  <div class="search-filter">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" 
+        placeholder="Search by payment ID, invoice or supplier..."
+        [(ngModel)]="searchQuery">
+    </div>
+
+    <div class="filter-select">
+      <select [(ngModel)]="filterStatus">
+        <option value="">All Statuses</option>
+        <option *ngFor="let status of statuses$ | async" [value]="status">
+          {{ status }}
+        </option>
+      </select>
+    </div>
+
+    <button class="btn-clear" (click)="clearFilters()">Clear Filters</button>
+  </div>
+
+  <!-- Payments Table -->
+  <div class="table-container">
+    <table class="payments-table" *ngIf="(filteredPayments$ | async)?.length; else noData">
+      <thead>
+        <tr>
+          <th>Payment ID</th>
+          <th>Invoice No</th>
+          <th>Supplier</th>
+          <th>Amount</th>
+          <th>Method</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let payment of filteredPayments$ | async">
+          <td class="payment-id">{{ payment.paymentId }}</td>
+          <td>{{ payment.invoiceNo }}</td>
+          <td>{{ payment.supplier }}</td>
+          <td class="amount">₹{{ payment.amount | number:'1.2-2' }}</td>
+          <td>
+            <span class="method-badge">{{ payment.paymentMethod }}</span>
+          </td>
+          <td>
+            <span class="status-badge" [ngClass]="getStatusClass(payment.status)">
+              {{ payment.status }}
+            </span>
+          </td>
+          <td class="actions">
+            <button class="btn-action view-btn" (click)="viewDetails(payment)" title="View Details">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button class="btn-action edit-btn" (click)="editPayment(payment)" title="Edit">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn-action delete-btn" (click)="deletePayment(payment)" title="Delete">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ng-template #noData>
+      <div class="no-data">
+        <i class="fas fa-inbox"></i>
+        <h3>No Payments Found</h3>
+        <p>{{ searchQuery || filterStatus ? 'Try adjusting your filters' : 'Start by recording a new payment' }}</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Add/Edit Form Modal -->
+  <div class="modal-overlay" *ngIf="showForm" (click)="closeForm()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ isEditMode ? 'Edit Payment' : 'Record New Payment' }}</h2>
+        <button class="btn-close" (click)="closeForm()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Payment ID *</label>
+          <input type="text" 
+            [(ngModel)]="formData.paymentId"
+            placeholder="e.g., PAY-2024-001">
+        </div>
+
+        <div class="form-group">
+          <label>Invoice Number *</label>
+          <input type="text" 
+            [(ngModel)]="formData.invoiceNo"
+            placeholder="e.g., PINV-2024-001">
+        </div>
+
+        <div class="form-group">
+          <label>Supplier *</label>
+          <select [(ngModel)]="formData.supplier">
+            <option value="">Select Supplier</option>
+            <option *ngFor="let supplier of suppliers$ | async" [value]="supplier">
+              {{ supplier }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Amount (₹) *</label>
+            <input type="number" 
+              [(ngModel)]="formData.amount"
+              placeholder="0.00"
+              min="0">
+          </div>
+          <div class="form-group">
+            <label>Payment Date *</label>
+            <input type="date" [(ngModel)]="formData.paymentDate">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Payment Method</label>
+            <select [(ngModel)]="formData.paymentMethod">
+              <option *ngFor="let method of paymentMethods$ | async" [value]="method">
+                {{ method }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Reference No</label>
+            <input type="text" 
+              [(ngModel)]="formData.referenceNo"
+              placeholder="e.g., TRF-000123456">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Status</label>
+          <select [(ngModel)]="formData.status">
+            <option *ngFor="let status of statuses$ | async" [value]="status">
+              {{ status }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea [(ngModel)]="formData.notes"
+            placeholder="Add payment notes or remarks..."
+            rows="3"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeForm()">Cancel</button>
+        <button class="btn-save" (click)="savePayment()">Save Payment</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail View Modal -->
+  <div class="modal-overlay" *ngIf="showDetailModal && selectedPayment" (click)="closeDetailModal()">
+    <div class="modal detail-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Payment Details - {{ selectedPayment.paymentId }}</h2>
+        <button class="btn-close" (click)="closeDetailModal()">&times;</button>
+      </div>
+
+      <div class="modal-body detail-body">
+        <div class="detail-row">
+          <div class="detail-item">
+            <span class="label">Payment ID:</span>
+            <span class="value">{{ selectedPayment.paymentId }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Status:</span>
+            <span class="status-badge" [ngClass]="getStatusClass(selectedPayment.status)">
+              {{ selectedPayment.status }}
+            </span>
+          </div>
+        </div>
+
+        <div class="detail-row">
+          <div class="detail-item">
+            <span class="label">Invoice Number:</span>
+            <span class="value">{{ selectedPayment.invoiceNo }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Supplier:</span>
+            <span class="value">{{ selectedPayment.supplier }}</span>
+          </div>
+        </div>
+
+        <div class="detail-divider"></div>
+
+        <div class="amount-section">
+          <div class="amount-display">
+            <h3>Payment Amount</h3>
+            <p class="large-amount">₹{{ selectedPayment.amount | number:'1.2-2' }}</p>
+          </div>
+        </div>
+
+        <div class="detail-divider"></div>
+
+        <div class="detail-row">
+          <div class="detail-item">
+            <span class="label">Payment Method:</span>
+            <span class="value method-badge">{{ selectedPayment.paymentMethod }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Reference Number:</span>
+            <span class="value">{{ selectedPayment.referenceNo }}</span>
+          </div>
+        </div>
+
+        <div class="detail-row">
+          <div class="detail-item">
+            <span class="label">Payment Date:</span>
+            <span class="value">{{ selectedPayment.paymentDate }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Created:</span>
+            <span class="value">{{ selectedPayment.created | date:'short' }}</span>
+          </div>
+        </div>
+
+        <div *ngIf="selectedPayment.notes" class="detail-divider"></div>
+
+        <div *ngIf="selectedPayment.notes" class="notes">
+          <strong>Notes:</strong>
+          <p>{{ selectedPayment.notes }}</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-edit" (click)="editPayment(selectedPayment); closeDetailModal()">Edit</button>
+        <button class="btn-cancel" (click)="closeDetailModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

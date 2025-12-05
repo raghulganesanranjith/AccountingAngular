@@ -1,0 +1,112 @@
+<div class="template-container">
+  <!-- Header -->
+  <div class="template-header">
+    <div class="header-top">
+      <h1>New Entry</h1>
+      <span class="status-badge">Draft</span>
+    </div>
+  </div>
+
+  <!-- Main Form -->
+  <div class="template-form">
+    <!-- Name Section -->
+    <div class="name-section">
+      <div class="form-group">
+        <label>Name <span class="required">*</span></label>
+        <input
+          type="text"
+          [(ngModel)]="template.name"
+          class="form-input"
+          placeholder="Enter template name"
+          [class.error]="showNameError"
+        />
+        <span class="error-message" *ngIf="showNameError">Name is required</span>
+      </div>
+    </div>
+
+    <!-- Details Section -->
+    <div class="details-section">
+      <div class="section-header">
+        <h2>Details</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="section-content">
+        <div class="table-wrapper">
+          <table class="tax-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Tax Invoice Account</th>
+                <th>Tax Payment Account</th>
+                <th>Rate</th>
+                <th class="action-col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of template.rows; let i = index">
+                <td class="row-number">{{ i + 1 }}</td>
+                <td>
+                  <select
+                    [(ngModel)]="row.taxInvoiceAccount"
+                    class="form-input table-select"
+                  >
+                    <option value="">Select Account</option>
+                    <option *ngFor="let account of accounts" [value]="account">{{ account }}</option>
+                  </select>
+                </td>
+                <td>
+                  <select
+                    [(ngModel)]="row.taxPaymentAccount"
+                    class="form-input table-select"
+                  >
+                    <option value="">Select Account</option>
+                    <option *ngFor="let account of accounts" [value]="account">{{ account }}</option>
+                  </select>
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    [(ngModel)]="row.rate"
+                    class="form-input table-input"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                  />
+                </td>
+                <td class="action-col">
+                  <button
+                    class="btn-delete"
+                    (click)="removeRow(row.id)"
+                    title="Delete row"
+                  >
+                    🗑️
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="template.rows.length === 0" class="empty-row">
+                <td colspan="5" class="empty-message">No rows added yet</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Add Row Button -->
+        <div class="add-row-section">
+          <button class="btn-add-row" (click)="addRow()">
+            <span class="plus-icon">+</span> Add Row
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="form-actions">
+      <button class="btn btn-secondary" (click)="goBack()">Back to Templates</button>
+      <button class="btn btn-tertiary" (click)="discardTemplate()">Discard</button>
+      <button class="btn btn-primary" (click)="submitTemplate()" [disabled]="loading">
+        {{ loading ? 'Saving...' : 'Save & Submit' }}
+      </button>
+    </div>
+  </div>
+</div>

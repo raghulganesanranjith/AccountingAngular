@@ -1,0 +1,55 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Party</h1>
+    <button class="btn-primary" (click)="createNewParty()">
+      <i class="fas fa-plus"></i> New Party
+    </button>
+  </div>
+
+  <div class="page-content">
+    <div *ngIf="parties.length === 0" class="empty-state">
+      <i class="fas fa-users"></i>
+      <h2>No Parties</h2>
+      <p>Create your first party</p>
+      <button class="btn-primary" (click)="createNewParty()">
+        <i class="fas fa-plus"></i> New Party
+      </button>
+    </div>
+
+    <div *ngIf="parties.length > 0" class="table-wrapper">
+      <table class="parties-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let party of parties">
+            <td><strong>{{ party.name }}</strong></td>
+            <td>
+              <span class="badge" [ngClass]="'badge-' + party.type.toLowerCase()">
+                {{ party.type }}
+              </span>
+            </td>
+            <td>{{ party.email }}</td>
+            <td>{{ party.phone }}</td>
+            <td>{{ party.address }}</td>
+            <td class="actions">
+              <button class="btn-icon" (click)="editParty(party)" title="Edit">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn-icon btn-danger" (click)="deleteParty(party)" title="Delete">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

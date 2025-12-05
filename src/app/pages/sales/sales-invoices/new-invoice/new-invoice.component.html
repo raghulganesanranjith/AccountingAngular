@@ -1,0 +1,172 @@
+<div class="new-invoice-container">
+  <!-- Header -->
+  <div class="invoice-header">
+    <div class="header-top">
+      <h1>New Entry</h1>
+      <span class="status-badge">Draft</span>
+    </div>
+  </div>
+
+  <!-- Main Form -->
+  <div class="invoice-form">
+    <!-- Number Series & Customer Row -->
+    <div class="form-row">
+      <div class="form-group">
+        <label>Number Series</label>
+        <div class="input-group">
+          <input type="text" [(ngModel)]="invoice.numberSeries" class="form-input" readonly>
+          <span class="input-icon">›</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Customer</label>
+        <select [(ngModel)]="invoice.customer" class="form-input">
+          <option value="">Select Customer</option>
+          <option *ngFor="let customer of customers" [value]="customer">{{ customer }}</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Date & Type Row -->
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date</label>
+        <input type="datetime-local" [(ngModel)]="invoice.date" class="form-input">
+        <span class="calendar-icon">📅</span>
+      </div>
+
+      <div class="form-group">
+        <label>Type</label>
+        <select [(ngModel)]="invoice.type" class="form-input">
+          <option value="Party">Party</option>
+          <option value="Individual">Individual</option>
+          <option value="Company">Company</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Items Section -->
+    <div class="items-section">
+      <div class="section-header">
+        <h2>Items</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="items-content">
+        <div class="items-label">Items</div>
+        
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Item</th>
+              <th>Tax</th>
+              <th>Quantity</th>
+              <th>Rate</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of invoice.items; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>
+                <select [(ngModel)]="item.item" class="table-input">
+                  <option value="">Select Item</option>
+                  <option *ngFor="let itemName of itemList" [value]="itemName">{{ itemName }}</option>
+                </select>
+              </td>
+              <td>
+                <select [(ngModel)]="item.tax" class="table-input" (change)="calculateTotals()">
+                  <option *ngFor="let tax of taxOptions" [value]="tax">{{ tax }}</option>
+                </select>
+              </td>
+              <td>
+                <input type="number" [(ngModel)]="item.quantity" class="table-input" (change)="updateItemAmount(item)">
+              </td>
+              <td>
+                <input type="number" [(ngModel)]="item.rate" class="table-input" (change)="updateItemAmount(item)">
+              </td>
+              <td class="amount-cell">₹ {{ item.amount | number: '1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="add-row">
+          <button class="btn-add-row" (click)="addRow()">
+            <span class="plus-icon">+</span> Add Row
+          </button>
+        </div>
+
+        <div class="net-total">
+          <label>Net Total</label>
+          <div class="total-value">₹ {{ invoice.netTotal | number: '1.2-2' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tax and Totals Section -->
+    <div class="tax-totals-section">
+      <div class="section-header">
+        <h2>Tax and Totals</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="tax-totals-content">
+        <div class="total-row">
+          <label>Grand Total</label>
+          <div class="total-value">₹ {{ invoice.grandTotal | number: '1.2-2' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Outstanding Section -->
+    <div class="outstanding-section">
+      <div class="section-header">
+        <h2>Outstanding</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="outstanding-content">
+        <div class="outstanding-row">
+          <label>Outstanding Amount</label>
+          <div class="outstanding-value">₹ {{ invoice.outstandingAmount | number: '1.2-2' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- References Section -->
+    <div class="references-section">
+      <div class="section-header">
+        <h2>References</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="references-content">
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>Notes</label>
+            <textarea [(ngModel)]="invoice.notes" class="form-textarea" placeholder="Add invoice notes"></textarea>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>Coupons</label>
+            <div class="coupons-input">
+              <input type="text" [(ngModel)]="invoice.coupons" class="form-input" placeholder="Enter coupon code">
+              <span class="coupon-icon">🎟️</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="form-actions">
+      <button class="btn btn-secondary" (click)="goBackToInvoices()">Back to Invoices</button>
+      <button class="btn btn-tertiary" (click)="discardInvoice()">Discard</button>
+      <button class="btn btn-primary" (click)="submitInvoice()">Save & Submit</button>
+    </div>
+  </div>
+</div>

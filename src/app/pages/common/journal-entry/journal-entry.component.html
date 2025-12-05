@@ -1,0 +1,59 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Journal Entry</h1>
+    <button class="btn-primary" (click)="createNewEntry()">
+      <i class="fas fa-plus"></i> New Entry
+    </button>
+  </div>
+
+  <div class="page-content">
+    <div *ngIf="entries.length === 0" class="empty-state">
+      <i class="fas fa-book"></i>
+      <h2>No Journal Entries</h2>
+      <p>Create your first journal entry</p>
+      <button class="btn-primary" (click)="createNewEntry()">
+        <i class="fas fa-plus"></i> New Entry
+      </button>
+    </div>
+
+    <div *ngIf="entries.length > 0" class="table-wrapper">
+      <table class="entries-table">
+        <thead>
+          <tr>
+            <th>Entry #</th>
+            <th>Date</th>
+            <th>Account</th>
+            <th>Debit</th>
+            <th>Credit</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entry of entries">
+            <td><strong>{{ entry.entryNumber }}</strong></td>
+            <td>{{ entry.date }}</td>
+            <td>{{ entry.account }}</td>
+            <td class="amount">₹ {{ entry.debit | number: '1.2-2' }}</td>
+            <td class="amount">₹ {{ entry.credit | number: '1.2-2' }}</td>
+            <td>{{ entry.description }}</td>
+            <td>
+              <span class="badge" [ngClass]="'badge-' + entry.status.toLowerCase()">
+                {{ entry.status }}
+              </span>
+            </td>
+            <td class="actions">
+              <button class="btn-icon" (click)="editEntry(entry)" title="Edit">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn-icon btn-danger" (click)="deleteEntry(entry)" title="Delete">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

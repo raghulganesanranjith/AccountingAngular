@@ -1,0 +1,132 @@
+<div class="reports-container">
+  <div class="reports-header">
+    <h1>General Ledger Report</h1>
+    <div class="header-actions">
+      <button class="btn btn-primary" (click)="exportToCSV()">
+        <i class="fas fa-download"></i> Export CSV
+      </button>
+      <button class="btn btn-secondary" (click)="printReport()">
+        <i class="fas fa-print"></i> Print
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-section">
+    <h3>Filters</h3>
+    <div class="filters-grid">
+      <div class="filter-group" *ngFor="let field of filterFields">
+        <label>{{ field.label }}</label>
+        <div [ngSwitch]="field.fieldtype">
+          <!-- Select Field -->
+          <select
+            *ngSwitchCase="'Select'"
+            [ngModel]="getFilterValue(field.fieldname)"
+            (change)="onFilterFieldChange(field.fieldname, $event)"
+            class="form-control"
+          >
+            <option *ngFor="let opt of field.options" [value]="opt.value">
+              {{ opt.label }}
+            </option>
+          </select>
+
+          <!-- Text Field -->
+          <input
+            *ngSwitchCase="'Text'"
+            type="text"
+            [ngModel]="getFilterValue(field.fieldname)"
+            (change)="onFilterFieldChange(field.fieldname, $event)"
+            [placeholder]="field.placeholder"
+            class="form-control"
+          />
+
+          <!-- Date Field -->
+          <input
+            *ngSwitchCase="'Date'"
+            type="date"
+            [ngModel]="getFilterValue(field.fieldname)"
+            (change)="onFilterFieldChange(field.fieldname, $event)"
+            class="form-control"
+          />
+
+          <!-- Checkbox Field -->
+          <div *ngSwitchCase="'Check'" class="checkbox-wrapper">
+            <input
+              type="checkbox"
+              [ngModel]="getFilterValue(field.fieldname)"
+              (change)="onFilterFieldChange(field.fieldname, $event)"
+              class="form-checkbox"
+            />
+            <span>{{ field.label }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading report...</p>
+  </div>
+
+  <!-- Report Data -->
+  <div *ngIf="!isLoading && report" class="report-section">
+    <div class="table-wrapper">
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th *ngFor="let col of report.columns" [style.text-align]="col.align || 'left'">
+              {{ col.label }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let row of report.data"
+            [class.empty-row]="row.isEmpty"
+            [class.bold-row]="row.cells[0].bold"
+            [class.italic-row]="row.cells[0].italics"
+          >
+            <td *ngFor="let cell of row.cells; let i = index" [style.text-align]="cell.align || 'left'">
+              <span
+                [class.bold]="cell.bold"
+                [class.italics]="cell.italics"
+              >
+                {{ cell.value }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Totals -->
+    <div class="totals-section">
+      <div class="total-item">
+        <label>Total Debit:</label>
+        <span class="total-value debit">
+          {{ report.totals.totalDebit | currency }}
+        </span>
+      </div>
+      <div class="total-item">
+        <label>Total Credit:</label>
+        <span class="total-value credit">
+          {{ report.totals.totalCredit | currency }}
+        </span>
+      </div>
+      <div class="total-item">
+        <label>Net Balance:</label>
+        <span class="total-value balance">
+          {{ (report.totals.totalDebit - report.totals.totalCredit) | currency }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && report && report.data.length === 0" class="empty-state">
+    <i class="fas fa-inbox"></i>
+    <p>No data available for the selected filters</p>
+  </div>
+</div>

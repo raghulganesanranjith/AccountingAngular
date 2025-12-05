@@ -1,0 +1,51 @@
+<div class="setup-wizard">
+  <div class="setup-header">
+    <div class="setup-header-content">
+      <h1>Setup Your Business</h1>
+      <p class="setup-subtitle">Complete the setup steps to get started with your accounting system</p>
+    </div>
+    <div class="setup-progress">
+      <div class="progress-circle">
+        <span class="progress-percentage">{{ getCompletionPercentage() }}%</span>
+        <div class="progress-text">Complete</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="setup-container">
+    <div class="setup-sections">
+      <div *ngFor="let section of setupSections" class="setup-section">
+        <div class="section-header">
+          <h2 class="section-title">{{ section.label }}</h2>
+          <span class="section-count">{{ section.items.length }} items</span>
+        </div>
+
+        <div class="section-items">
+          <div *ngFor="let item of section.items" 
+               class="setup-item" 
+               [class.completed]="isTaskCompleted(item.key)"
+               (click)="onItemClick(item)">
+            <div class="item-header">
+              <div class="item-icon-check">
+                <span class="item-icon">{{ item.icon }}</span>
+                <div *ngIf="isTaskCompleted(item.key)" class="checkmark">✓</div>
+              </div>
+              <div class="item-content">
+                <h3 class="item-label">{{ item.label }}</h3>
+                <p class="item-description">{{ item.description }}</p>
+              </div>
+              <div class="item-action">
+                <span class="action-arrow">→</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="setup-footer">
+    <button class="btn-back" (click)="goBack()">← Back to Home</button>
+  </div>
+</div>
+

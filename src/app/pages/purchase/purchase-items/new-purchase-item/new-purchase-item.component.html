@@ -1,0 +1,158 @@
+<div class="item-container">
+  <!-- Header -->
+  <div class="item-header">
+    <div class="header-top">
+      <h1>New Entry</h1>
+      <span class="status-badge">Draft</span>
+    </div>
+  </div>
+
+  <!-- Main Form -->
+  <div class="item-form">
+    <!-- Avatar & Basic Info Row -->
+    <div class="form-section-top">
+      <div class="avatar-section">
+        <div class="avatar-placeholder">
+          <img *ngIf="avatarPreview" [src]="avatarPreview" alt="Avatar" class="avatar-image">
+          <svg *ngIf="!avatarPreview" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <polyline points="21 15 16 10 5 21"></polyline>
+          </svg>
+        </div>
+        <div class="avatar-controls">
+          <label class="btn-upload">
+            <input type="file" accept="image/*" (change)="onAvatarChange($event)" class="file-input" hidden>
+            📁 Upload
+          </label>
+          <button *ngIf="avatarPreview" class="btn-remove" (click)="removeAvatar()">🗑️ Remove</button>
+        </div>
+      </div>
+
+      <div class="basic-info">
+        <div class="form-group">
+          <label>Item Name <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="item.itemName" class="form-input" placeholder="Item Name">
+        </div>
+
+        <div class="form-group">
+          <label>Item Code <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="item.itemCode" class="form-input" placeholder="Item Code">
+          <span class="item-code-hint">Item Code</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Purpose & Type Row -->
+    <div class="form-row">
+      <div class="form-group">
+        <label>Purpose</label>
+        <select [(ngModel)]="item.purpose" class="form-input">
+          <option *ngFor="let purpose of purposes" [value]="purpose">{{ purpose }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Type</label>
+        <select [(ngModel)]="item.type" class="form-input">
+          <option *ngFor="let type of types" [value]="type">{{ type }}</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Details Section -->
+    <div class="details-section">
+      <div class="section-header">
+        <h2>Details</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="section-content">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Unit Type</label>
+            <select [(ngModel)]="item.unitType" class="form-input">
+              <option *ngFor="let unit of unitTypes" [value]="unit">{{ unit }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Rate</label>
+            <div class="rate-display">₹ {{ item.rate | number: '1.2-2' }}</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>Description</label>
+            <textarea [(ngModel)]="item.description" class="form-textarea" placeholder="Item Description"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Accounts Section -->
+    <div class="accounts-section">
+      <div class="section-header">
+        <h2>Accounts</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="section-content">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Sales Acc.</label>
+            <select [(ngModel)]="item.salesAccount" class="form-input">
+              <option value="">Select Account</option>
+              <option *ngFor="let account of salesAccounts" [value]="account">{{ account }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Purchase Acc.</label>
+            <select [(ngModel)]="item.purchaseAccount" class="form-input">
+              <option value="">Select Account</option>
+              <option *ngFor="let account of purchaseAccounts" [value]="account">{{ account }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>Tax</label>
+            <select [(ngModel)]="item.tax" class="form-input">
+              <option value="">Select Tax</option>
+              <option *ngFor="let tax of taxOptions" [value]="tax">{{ tax }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inventory Section -->
+    <div class="inventory-section">
+      <div class="section-header">
+        <h2>Inventory</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="section-content">
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>HSN/SAC</label>
+            <input type="text" [(ngModel)]="item.hsn" class="form-input" placeholder="HSN/SAC Code">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="form-actions">
+      <button class="btn btn-secondary" (click)="goBackToItems()">Back to Items</button>
+      <button class="btn btn-tertiary" (click)="discardItem()">Discard</button>
+      <button class="btn btn-primary" (click)="submitItem()" [disabled]="loading">
+        {{ loading ? 'Saving...' : 'Save & Submit' }}
+      </button>
+    </div>
+  </div>
+</div>

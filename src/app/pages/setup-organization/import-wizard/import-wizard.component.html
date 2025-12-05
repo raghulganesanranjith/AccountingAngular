@@ -1,0 +1,187 @@
+<div class="import-wizard-container">
+  <!-- Header -->
+  <div class="wizard-header">
+    <div class="header-top">
+      <button class="back-button" (click)="goBack()" title="Go Back">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <h1>{{ importType ? importType.toUpperCase() + ' Import' : 'Import Wizard' }}</h1>
+    </div>
+    
+    <div class="header-actions" *ngIf="hasImporter">
+      <button class="action-btn" (click)="addRow()" [disabled]="isMakingEntries" title="Add Row">
+        <i class="fas fa-plus"></i> Add Row
+      </button>
+      <button class="action-btn" (click)="saveTemplate()" [disabled]="isMakingEntries" title="Save Template">
+        <i class="fas fa-download"></i> Save Template
+      </button>
+      <button class="action-btn" (click)="showColumnPicker = true" [disabled]="isMakingEntries" title="Pick Columns">
+        <i class="fas fa-columns"></i> Pick Columns
+      </button>
+    </div>
+
+    <div class="header-actions" *ngIf="!hasImporter || (hasImporter && !canImportData)">
+      <button class="btn-primary" (click)="fileInput.click()" [disabled]="isMakingEntries" title="Select File">
+        <i class="fas fa-file-csv"></i> Select File
+      </button>
+    </div>
+
+    <div class="header-actions" *ngIf="canImportData && !isMakingEntries">
+      <button class="btn-primary" (click)="performImport()" [disabled]="!!errorMessage" title="Import Data">
+        <i class="fas fa-upload"></i> Import Data
+      </button>
+    </div>
+  </div>
+
+  <!-- Import Type Selection -->
+  <div class="import-type-section">
+    <label for="importType">Import Type:</label>
+    <select id="importType" [(ngModel)]="importType" (change)="setImportType(importType)" [disabled]="isMakingEntries">
+      <option value="">-- Select Import Type --</option>
+      <option *ngFor="let type of importableTypes" [value]="type.value">
+        {{ type.label }}
+      </option>
+    </select>
+
+    <div class="status-message" *ngIf="errorMessage" [class.error]="true">
+      <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
+    </div>
+    <div class="status-message" *ngIf="!errorMessage && helperMessage">
+      <i class="fas fa-info-circle"></i> {{ helperMessage }}
+      <span *ngIf="rows.length > 0">({{ rows.length }} rows added)</span>
+    </div>
+  </div>
+
+  <!-- File Input (Hidden) -->
+  <input type="file" #fileInput hidden accept=".csv" (change)="selectFile($event)">
+
+  <!-- Data Grid -->
+  <div class="data-grid-container" *ngIf="hasImporter && rows.length > 0">
+    <div class="grid-header">
+      <div class="grid-cell index-cell">#</div>
+      <div class="grid-cell" *ngFor="let col of columnHeaders">
+        <select [(ngModel)]="assignedColumns[0]" class="column-select">
+          <option value="">{{ col }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid-body">
+      <div class="grid-row" *ngFor="let row of rows; let i = index">
+        <div class="grid-cell index-cell">
+          <span>{{ i + 1 }}</span>
+          <button class="remove-btn" (click)="removeRow(i)" title="Remove Row">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="grid-cell" *ngFor="let col of columnHeaders">
+          <input type="text" [(ngModel)]="row[col]" class="cell-input" placeholder="Enter value">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="hasImporter && rows.length === 0">
+    <i class="fas fa-inbox"></i>
+    <p>No data to import. Select a file or add rows manually.</p>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div class="loading-container" *ngIf="isMakingEntries">
+    <div class="loading-header">
+      <h3>Importing Data...</h3>
+      <p>{{ messageLoading }}</p>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="percentLoading * 100"></div>
+    </div>
+  </div>
+
+  <!-- Import Completed Modal -->
+  <div class="modal-overlay" *ngIf="complete">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Import Complete</h2>
+        <button class="close-btn" (click)="clear()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Success Section -->
+        <div class="result-section" *ngIf="success.length > 0">
+          <div class="result-header success">
+            <i class="fas fa-check-circle"></i>
+            <span>Successfully Imported: {{ success.length }}</span>
+          </div>
+          <div class="result-list">
+            <div class="result-item" *ngFor="let item of success; let i = index">
+              {{ i + 1 }}. {{ item }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Failed Section -->
+        <div class="result-section" *ngIf="failed.length > 0">
+          <div class="result-header failed">
+            <i class="fas fa-times-circle"></i>
+            <span>Failed to Import: {{ failed.length }}</span>
+          </div>
+          <div class="result-list">
+            <div class="result-item error" *ngFor="let item of failed; let i = index">
+              {{ i + 1 }}. {{ item.name }} - {{ item.error }}
+            </div>
+          </div>
+        </div>
+
+        <!-- No Results -->
+        <div class="empty-result" *ngIf="success.length === 0 && failed.length === 0">
+          No entries were imported.
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="clearSuccessfullyImportedEntries()" 
+          *ngIf="failed.length > 0">
+          <i class="fas fa-redo"></i> Fix Failed
+        </button>
+        <button class="btn-secondary" (click)="showMe()" 
+          *ngIf="success.length > 0 && failed.length === 0">
+          <i class="fas fa-eye"></i> Show Me
+        </button>
+        <button class="btn-primary" (click)="clear()">
+          <i class="fas fa-check"></i> Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Column Picker Modal -->
+  <div class="modal-overlay" *ngIf="showColumnPicker">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Pick Import Columns</h2>
+        <button class="close-btn" (click)="showColumnPicker = false">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body column-picker">
+        <div class="columns-list">
+          <label class="column-item" *ngFor="let col of columnHeaders">
+            <input type="checkbox" [(ngModel)]="selectedColumns" [value]="col">
+            <span>{{ col }}</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <p class="column-count">{{ columnHeaders.length }} columns available</p>
+        <button class="btn-primary" (click)="showColumnPicker = false">
+          <i class="fas fa-check"></i> Done
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

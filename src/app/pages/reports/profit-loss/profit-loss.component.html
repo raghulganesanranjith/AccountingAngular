@@ -1,0 +1,167 @@
+<div class="profit-loss-container">
+  <div class="reports-header">
+    <h1>Profit & Loss Report</h1>
+    <div class="header-actions">
+      <button class="btn btn-primary" (click)="exportToCSV()">
+        <i class="fas fa-download"></i> Export CSV
+      </button>
+      <button class="btn btn-secondary" (click)="printReport()">
+        <i class="fas fa-print"></i> Print
+      </button>
+    </div>
+  </div>
+
+  <!-- Chart Section -->
+  <div class="chart-section">
+    <div class="chart-header">
+      <h2>Sales Overview</h2>
+      <div class="period-selector">
+        <select [(ngModel)]="period" (change)="onPeriodChange(period)" class="form-control">
+          <option *ngFor="let opt of periodOptions" [value]="opt">{{ opt }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="chart-container" *ngIf="!chartLoading">
+      <div *ngIf="hasChartData" class="chart-wrapper">
+        <canvas #chartCanvas></canvas>
+        <div class="chart-placeholder">
+          <p>📊 Chart visualization showing Income, Expenses, and Net Profit over time</p>
+          <div class="mock-chart-data" *ngIf="chartData">
+            <div class="chart-legend">
+              <span class="legend-item income">
+                <span class="legend-color" style="background: rgba(75, 192, 75, 0.1); border: 1px solid rgba(75, 192, 75, 1);"></span>
+                Income
+              </span>
+              <span class="legend-item expense">
+                <span class="legend-color" style="background: rgba(255, 99, 132, 0.1); border: 1px solid rgba(255, 99, 132, 1);"></span>
+                Expense
+              </span>
+              <span class="legend-item profit">
+                <span class="legend-color" style="background: rgba(54, 162, 235, 0.1); border: 1px solid rgba(54, 162, 235, 1);"></span>
+                Net Profit
+              </span>
+            </div>
+            <div class="chart-summary">
+              <div class="summary-stat">
+                <span class="stat-label">Avg Income:</span>
+                <span class="stat-value">${{ (chartData.datasets[0].data | slice:0:1)[0] | number:'1.0-0' }}</span>
+              </div>
+              <div class="summary-stat">
+                <span class="stat-label">Avg Expense:</span>
+                <span class="stat-value">${{ (chartData.datasets[1].data | slice:0:1)[0] | number:'1.0-0' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="!hasChartData" class="no-data-message">
+        <p>No transactions yet</p>
+      </div>
+    </div>
+
+    <div *ngIf="chartLoading" class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Loading chart data...</p>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-section">
+    <h3>Filters</h3>
+    <div class="filters-grid">
+      <div class="filter-group" *ngFor="let field of filterFields">
+        <label>{{ field.label }}</label>
+        <div [ngSwitch]="field.fieldtype">
+          <!-- Select Field -->
+          <select
+            *ngSwitchCase="'Select'"
+            [ngModel]="getFilterValue(field.fieldname)"
+            (change)="onFilterFieldChange(field.fieldname, $event)"
+            class="form-control"
+          >
+            <option *ngFor="let opt of field.options" [value]="opt.value">
+              {{ opt.label }}
+            </option>
+          </select>
+
+          <!-- Text Field -->
+          <input
+            *ngSwitchCase="'Text'"
+            type="text"
+            [ngModel]="getFilterValue(field.fieldname)"
+            (change)="onFilterFieldChange(field.fieldname, $event)"
+            [placeholder]="field.placeholder"
+            class="form-control"
+          />
+
+          <!-- Date Field -->
+          <input
+            *ngSwitchCase="'Date'"
+            type="date"
+            [ngModel]="getFilterValue(field.fieldname)"
+            (change)="onFilterFieldChange(field.fieldname, $event)"
+            class="form-control"
+          />
+
+          <!-- Checkbox Field -->
+          <div *ngSwitchCase="'Check'" class="checkbox-wrapper">
+            <input
+              type="checkbox"
+              [ngModel]="getFilterValue(field.fieldname)"
+              (change)="onFilterFieldChange(field.fieldname, $event)"
+              class="form-checkbox"
+            />
+            <span>{{ field.label }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading report...</p>
+  </div>
+
+  <!-- Report Data -->
+  <div *ngIf="!isLoading && report" class="report-section">
+    <div class="table-wrapper">
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th *ngFor="let col of report.columns" [style.text-align]="col.align || 'left'">
+              {{ col.label }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let row of report.data"
+            [class.empty-row]="row.isEmpty"
+            [class.bold-row]="row.cells[0].bold"
+            [class.italic-row]="row.cells[0].italics"
+          >
+            <td
+              *ngFor="let cell of row.cells; let i = index"
+              [style.text-align]="cell.align || 'left'"
+            >
+              <span
+                [class.bold]="cell.bold"
+                [class.italics]="cell.italics"
+              >
+                {{ cell.value }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && report && report.data.length === 0" class="empty-state">
+    <p>No data available for the selected filters</p>
+  </div>
+</div>

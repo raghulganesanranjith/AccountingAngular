@@ -1,0 +1,25 @@
+<div class="sales-selector-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Sales</h1>
+      <p class="subtitle">Manage all your sales operations in one place</p>
+    </div>
+  </div>
+
+  <!-- Sales Options Grid -->
+  <div class="sales-grid">
+    <div class="sales-card" *ngFor="let item of salesItems" (click)="navigateToSales(item.route)">
+      <div class="card-icon">
+        <i [class]="item.icon"></i>
+      </div>
+      <div class="card-content">
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.description }}</p>
+      </div>
+      <div class="card-arrow">
+        <i class="fas fa-arrow-right"></i>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,189 @@
+<div class="purchase-invoice-container">
+  <!-- Header -->
+  <div class="invoice-header">
+    <div class="header-top">
+      <h1>New Entry</h1>
+      <span class="status-badge">Draft</span>
+    </div>
+  </div>
+
+  <!-- Main Form -->
+  <div class="invoice-form">
+    <!-- Number Series & Supplier Row -->
+    <div class="form-row">
+      <div class="form-group">
+        <label>Number Series</label>
+        <div class="input-group">
+          <input type="text" [(ngModel)]="purchaseInvoice.numberSeries" class="form-input" readonly>
+          <span class="input-icon">›</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Supplier</label>
+        <select [(ngModel)]="purchaseInvoice.supplier" class="form-input">
+          <option value="">Select Supplier</option>
+          <option *ngFor="let supplier of suppliers" [value]="supplier">{{ supplier }}</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Account & Date Row -->
+    <div class="form-row">
+      <div class="form-group">
+        <label>Account</label>
+        <select [(ngModel)]="purchaseInvoice.account" class="form-input">
+          <option value="">Select Account</option>
+          <option *ngFor="let account of accounts" [value]="account">{{ account }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Date</label>
+        <div class="input-group">
+          <input type="datetime-local" [(ngModel)]="purchaseInvoice.date" class="form-input">
+          <span class="calendar-icon">📅</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Items Section -->
+    <div class="items-section">
+      <div class="section-header">
+        <h2>Items</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="items-content">
+        <div class="items-label">Items</div>
+        
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Item</th>
+              <th>Tax</th>
+              <th>Quantity</th>
+              <th>Rate</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of purchaseInvoice.items; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>
+                <select [(ngModel)]="item.item" class="table-input">
+                  <option value="">Select Item</option>
+                  <option *ngFor="let itemName of itemList" [value]="itemName">{{ itemName }}</option>
+                </select>
+              </td>
+              <td>
+                <select [(ngModel)]="item.tax" class="table-input" (change)="calculateTotals()">
+                  <option *ngFor="let tax of taxOptions" [value]="tax">{{ tax }}</option>
+                </select>
+              </td>
+              <td>
+                <input type="number" [(ngModel)]="item.quantity" class="table-input" (change)="updateItemAmount(item)">
+              </td>
+              <td>
+                <input type="number" [(ngModel)]="item.rate" class="table-input" (change)="updateItemAmount(item)">
+              </td>
+              <td class="amount-cell">₹ {{ item.amount | number: '1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="add-row">
+          <button class="btn-add-row" (click)="addRow()">
+            <span class="plus-icon">+</span> Add Row
+          </button>
+        </div>
+
+        <div class="net-total">
+          <label>Net Total</label>
+          <div class="total-value">₹ {{ purchaseInvoice.netTotal | number: '1.2-2' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tax and Totals Section -->
+    <div class="tax-totals-section">
+      <div class="section-header">
+        <h2>Tax and Totals</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="tax-totals-content">
+        <div class="total-row">
+          <label>Grand Total</label>
+          <div class="total-value">₹ {{ purchaseInvoice.grandTotal | number: '1.2-2' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Outstanding Section -->
+    <div class="outstanding-section">
+      <div class="section-header">
+        <h2>Outstanding</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="outstanding-content">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Outstanding Amount</label>
+            <div class="outstanding-value">₹ {{ purchaseInvoice.outstandingAmount | number: '1.2-2' }}</div>
+          </div>
+
+          <div class="form-group">
+            <label>Stock Not Received</label>
+            <div class="outstanding-value">{{ purchaseInvoice.stockNotReceived }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- References Section -->
+    <div class="references-section">
+      <div class="section-header">
+        <h2>References</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="references-content">
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>Notes</label>
+            <textarea [(ngModel)]="purchaseInvoice.notes" class="form-textarea" placeholder="Add invoice terms"></textarea>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>Attachment</label>
+            <div class="attachment-input">
+              <input type="text" [(ngModel)]="purchaseInvoice.attachment" class="form-input" placeholder="Add attachment">
+              <span class="attachment-icon">📎</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>Return Against</label>
+            <input type="text" [(ngModel)]="purchaseInvoice.returnAgainst" class="form-input" placeholder="Return Against">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="form-actions">
+      <button class="btn btn-secondary" (click)="goBackToPurchaseInvoices()">Back to Purchase Invoices</button>
+      <button class="btn btn-tertiary" (click)="discardPurchaseInvoice()">Discard</button>
+      <button class="btn btn-primary" (click)="submitPurchaseInvoice()" [disabled]="loading">
+        {{ loading ? 'Saving...' : 'Save & Submit' }}
+      </button>
+    </div>
+  </div>
+</div>

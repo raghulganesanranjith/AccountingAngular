@@ -1,0 +1,320 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Sales Invoices</h1>
+    <button class="btn-primary" (click)="createNewInvoice()">
+      <i class="fas fa-plus"></i> New Invoice
+    </button>
+  </div>
+
+  <div class="page-content">
+    <!-- Invoices List -->
+    <div class="invoices-list" *ngIf="!showForm && (invoices$ | async) as invoices">
+      <div *ngIf="invoices.length === 0" class="empty-state">
+        <i class="fas fa-file-invoice"></i>
+        <h2>No Invoices Yet</h2>
+        <p>Create your first sales invoice</p>
+        <button class="btn-primary" (click)="createNewInvoice()">
+          <i class="fas fa-plus"></i> Create Invoice
+        </button>
+      </div>
+
+      <div *ngIf="invoices.length > 0" class="table-wrapper">
+        <table class="invoices-table">
+          <thead>
+            <tr>
+              <th>Invoice #</th>
+              <th>Customer</th>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Outstanding</th>
+              <th>Status</th>
+              <th>Loyalty Points</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let invoice of invoices" 
+                [class.invoice-row]="true"
+                [class.demo-row]="invoice.id.includes('demo')"
+                (click)="invoice.id.includes('demo') && openDemoInvoice(invoice)">
+              <td>
+                <strong>
+                  {{ invoice.invoiceNumber }}
+                  <span *ngIf="invoice.id.includes('demo')" class="demo-badge-inline">DEMO</span>
+                </strong>
+              </td>
+              <td>{{ invoice.customer.name }}</td>
+              <td>{{ invoice.date | date: 'dd/MM/yyyy' }}</td>
+              <td class="amount">{{ invoice.grandTotal | currency }}</td>
+              <td [class.unpaid]="invoice.outstandingAmount > 0" class="outstanding">
+                {{ invoice.outstandingAmount | currency }}
+              </td>
+              <td>
+                <span class="badge" [ngClass]="'badge-' + invoice.status.toLowerCase()">
+                  {{ invoice.status }}
+                </span>
+              </td>
+              <td [class.positive]="invoice.loyaltyPoints && invoice.loyaltyPoints > 0">
+                <span *ngIf="invoice.loyaltyPoints">
+                  {{ invoice.loyaltyPoints > 0 ? '+' : '' }}{{ invoice.loyaltyPoints }}
+                </span>
+              </td>
+              <td class="actions">
+                <button class="btn-icon" (click)="viewInvoice(invoice)" title="View">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn-icon" (click)="editInvoice(invoice)" title="Edit">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-icon btn-danger" (click)="deleteInvoice(invoice)" title="Delete">
+                  <i class="fas fa-trash"></i>
+                </button>
+                <button class="btn-icon btn-success" (click)="makePayment(invoice)" 
+                        *ngIf="invoice.outstandingAmount > 0" title="Make Payment">
+                  <i class="fas fa-money-bill"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Invoice Form -->
+    <div class="invoice-form" *ngIf="showForm">
+      <div class="form-header">
+        <h2>{{ formTitle }}</h2>
+        <button class="btn-close" (click)="closeForm()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <form (ngSubmit)="saveInvoice()" class="form-content">
+        <!-- Invoice Details -->
+        <div class="form-section">
+          <h3>Invoice Details</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Invoice Number</label>
+              <input type="text" [(ngModel)]="formData.invoiceNumber" name="invoiceNumber" placeholder="Auto-generated">
+            </div>
+            <div class="form-group">
+              <label>Date</label>
+              <input type="date" [(ngModel)]="formData.date" name="date" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Customer *</label>
+              <select [(ngModel)]="formData.customer" name="customer" required>
+                <option value="">Select Customer</option>
+                <option *ngFor="let c of mockCustomers" [value]="c.id">
+                  {{ c.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Items Section -->
+        <div class="form-section">
+          <div class="section-header">
+            <h3>Line Items</h3>
+            <button type="button" class="btn-secondary" (click)="addItemToInvoice()">
+              <i class="fas fa-plus"></i> Add Item
+            </button>
+          </div>
+
+          <div *ngIf="formData.items.length === 0" class="no-items">
+            <p>No items added yet. Click "Add Item" to get started.</p>
+          </div>
+
+          <div *ngFor="let item of formData.items; let i = index" class="item-row">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Item Name</label>
+                <select [(ngModel)]="item.itemName" [name]="'itemName_' + i" required>
+                  <option value="">Select Item</option>
+                  <option *ngFor="let mockItem of mockItems" [value]="mockItem.name">
+                    {{ mockItem.name }} (₹{{ mockItem.rate | number }})
+                  </option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Rate</label>
+                <input type="number" [(ngModel)]="item.rate" [name]="'rate_' + i" min="0" step="0.01">
+              </div>
+              <div class="form-group">
+                <label>Quantity</label>
+                <input type="number" [(ngModel)]="item.quantity" [name]="'qty_' + i" 
+                       (change)="updateItemAmount(i)" min="1">
+              </div>
+              <div class="form-group">
+                <label>Amount</label>
+                <input type="number" [value]="item.amount" disabled class="readonly">
+              </div>
+              <div class="form-group action">
+                <button type="button" class="btn-icon btn-danger" (click)="removeItemFromInvoice(i)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loyalty Points Section -->
+        <div class="form-section">
+          <h3>Loyalty Points</h3>
+          <div class="loyalty-section">
+            <div class="form-group">
+              <label>
+                <input type="checkbox" [(ngModel)]="formData.redeemLoyaltyPoints" name="redeemPoints">
+                Redeem Loyalty Points
+              </label>
+            </div>
+            <div class="form-group" *ngIf="formData.redeemLoyaltyPoints">
+              <label>Loyalty Points to Redeem</label>
+              <input type="number" [(ngModel)]="formData.loyaltyPoints" name="loyaltyPoints" min="0">
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="form-section">
+          <div class="form-group">
+            <label>Notes</label>
+            <textarea [(ngModel)]="formData.notes" name="notes" rows="3" 
+                      placeholder="Add any additional notes..."></textarea>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="closeForm()">Cancel</button>
+          <button type="submit" class="btn-primary">
+            <i class="fas fa-save"></i> Save Invoice
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Invoice View Modal -->
+  <div *ngIf="showModal && (selectedInvoice$ | async) as invoice" class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Invoice Details - {{ invoice.invoiceNumber }}</h2>
+        <button class="btn-close" (click)="closeModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Invoice Header Info -->
+        <div class="invoice-detail-grid">
+          <div class="detail-item">
+            <label>Invoice Number:</label>
+            <span>{{ invoice.invoiceNumber }}</span>
+          </div>
+          <div class="detail-item">
+            <label>Date:</label>
+            <span>{{ invoice.date | date: 'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="detail-item">
+            <label>Customer:</label>
+            <span>{{ invoice.customer.name }}</span>
+          </div>
+          <div class="detail-item">
+            <label>Status:</label>
+            <span class="badge" [ngClass]="'badge-' + invoice.status.toLowerCase()">
+              {{ invoice.status }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Customer Info -->
+        <div class="customer-info">
+          <h3>Customer Information</h3>
+          <p><strong>Email:</strong> {{ invoice.customer.email }}</p>
+          <p *ngIf="invoice.loyaltyProgram">
+            <strong>Loyalty Program:</strong> {{ invoice.loyaltyProgram }}
+          </p>
+        </div>
+
+        <!-- Items Detail -->
+        <div class="items-detail">
+          <h3>Line Items</h3>
+          <table class="detail-table">
+            <thead>
+              <tr>
+                <th>Item Name</th>
+                <th>Rate</th>
+                <th>Quantity</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of invoice.items">
+                <td>{{ item.itemName }}</td>
+                <td>{{ item.rate | currency }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.amount | currency }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Totals -->
+        <div class="totals">
+          <div class="total-row">
+            <label>Subtotal:</label>
+            <span>{{ invoice.subtotal | currency }}</span>
+          </div>
+          <div class="total-row">
+            <label>Tax ({{ invoice.taxRate }}%):</label>
+            <span>{{ invoice.tax | currency }}</span>
+          </div>
+          <div class="total-row grand-total">
+            <label>Grand Total:</label>
+            <span>{{ invoice.grandTotal | currency }}</span>
+          </div>
+          <div class="total-row outstanding">
+            <label>Outstanding Amount:</label>
+            <span [class.unpaid]="invoice.outstandingAmount > 0">
+              {{ invoice.outstandingAmount | currency }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Loyalty Points Info -->
+        <div *ngIf="invoice.loyaltyPoints" class="loyalty-info">
+          <h3>Loyalty Points</h3>
+          <p>
+            <strong>{{ invoice.redeemLoyaltyPoints ? 'Redeemed' : 'Earned' }}:</strong>
+            <span [class.positive]="invoice.loyaltyPoints > 0" [class.negative]="invoice.loyaltyPoints < 0">
+              {{ invoice.loyaltyPoints > 0 ? '+' : '' }}{{ invoice.loyaltyPoints }}
+            </span>
+          </p>
+        </div>
+
+        <!-- Notes -->
+        <div *ngIf="invoice.notes" class="notes-section">
+          <h3>Notes</h3>
+          <p>{{ invoice.notes }}</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="closeModal()">Close</button>
+        <button *ngIf="invoice.status === 'Draft'" type="button" class="btn-success" (click)="submitInvoice(invoice)">
+          <i class="fas fa-check"></i> Submit
+        </button>
+        <button *ngIf="invoice.status === 'Unpaid' || invoice.status === 'PartlyPaid'" type="button" 
+                class="btn-primary" (click)="makePayment(invoice)">
+          <i class="fas fa-money-bill"></i> Make Payment
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

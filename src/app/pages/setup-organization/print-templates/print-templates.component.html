@@ -1,0 +1,225 @@
+<div class="print-templates-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-top">
+      <button class="back-button" (click)="goBack()" title="Go Back">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <h1>Print Templates</h1>
+    </div>
+    <div class="header-actions">
+      <button class="btn-primary" (click)="openAddForm()" [disabled]="isLoading">
+        <i class="fas fa-plus"></i> Add Template
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-spinner" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Loading print templates...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!isLoading && printTemplates.length === 0">
+    <i class="fas fa-print"></i>
+    <h2>No Print Templates</h2>
+    <p>Create your first print template to get started</p>
+    <button class="btn-primary" (click)="openAddForm()">
+      <i class="fas fa-plus"></i> Create Template
+    </button>
+  </div>
+
+  <!-- Templates List -->
+  <div class="templates-grid" *ngIf="!isLoading && printTemplates.length > 0">
+    <div class="template-card" *ngFor="let template of printTemplates">
+      <div class="card-header">
+        <div class="template-info">
+          <h3>{{ template.name }}</h3>
+          <p class="document-type">{{ template.documentType }}</p>
+        </div>
+        <span class="status-badge" [class.active]="template.isActive" [class.inactive]="!template.isActive">
+          {{ template.isActive ? 'Active' : 'Inactive' }}
+        </span>
+      </div>
+
+      <div class="card-body">
+        <div class="template-details">
+          <div class="detail-row">
+            <span class="label">Type:</span>
+            <span class="value">{{ template.templateType }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Orientation:</span>
+            <span class="value">{{ template.orientation }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Page Size:</span>
+            <span class="value">{{ template.pageSize }}</span>
+          </div>
+          <div class="detail-row" *ngIf="template.headerText">
+            <span class="label">Header:</span>
+            <span class="value">{{ template.headerText }}</span>
+          </div>
+          <div class="detail-row" *ngIf="template.footerText">
+            <span class="label">Footer:</span>
+            <span class="value">{{ template.footerText }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button class="action-btn preview" (click)="previewTemplate(template)" title="Preview">
+          <i class="fas fa-eye"></i> Preview
+        </button>
+        <button class="action-btn default" (click)="setAsDefault(template)" title="Set as Default">
+          <i class="fas fa-check"></i> Default
+        </button>
+        <button class="action-btn" [class.active]="template.isActive" (click)="toggleActiveStatus(template)" 
+          [title]="template.isActive ? 'Deactivate' : 'Activate'">
+          <i class="fas" [class.fa-toggle-on]="template.isActive" [class.fa-toggle-off]="!template.isActive"></i>
+          {{ template.isActive ? 'Active' : 'Inactive' }}
+        </button>
+        <button class="action-btn edit" (click)="editTemplate(template)" title="Edit">
+          <i class="fas fa-edit"></i> Edit
+        </button>
+        <button class="action-btn delete" (click)="deleteTemplate(template.id)" title="Delete">
+          <i class="fas fa-trash"></i> Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Form Modal -->
+  <div class="modal-overlay" *ngIf="showAddForm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>{{ editingId ? 'Edit Print Template' : 'Add New Print Template' }}</h2>
+        <button class="close-btn" (click)="cancelForm()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form (ngSubmit)="editingId ? updateTemplate() : createPrintTemplate()" class="template-form">
+          <!-- Template Name -->
+          <div class="form-group">
+            <label for="templateName">Template Name <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="templateName" 
+              [(ngModel)]="newTemplate.name" 
+              name="name"
+              class="form-control" 
+              placeholder="e.g., Sales Invoice - Standard"
+              required
+            >
+          </div>
+
+          <!-- Document Type -->
+          <div class="form-group">
+            <label for="documentType">Document Type <span class="required">*</span></label>
+            <select 
+              id="documentType" 
+              [(ngModel)]="newTemplate.documentType" 
+              name="documentType"
+              class="form-control"
+              required
+            >
+              <option value="">-- Select Document Type --</option>
+              <option *ngFor="let doc of documentTypes" [value]="doc.value">
+                {{ doc.label }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Template Type -->
+          <div class="form-group">
+            <label for="templateType">Template Type <span class="required">*</span></label>
+            <select 
+              id="templateType" 
+              [(ngModel)]="newTemplate.templateType" 
+              name="templateType"
+              class="form-control"
+              required
+            >
+              <option value="">-- Select Template Type --</option>
+              <option *ngFor="let type of templateTypes" [value]="type.value">
+                {{ type.label }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Orientation -->
+          <div class="form-group">
+            <label for="orientation">Orientation</label>
+            <select 
+              id="orientation" 
+              [(ngModel)]="newTemplate.orientation" 
+              name="orientation"
+              class="form-control"
+            >
+              <option *ngFor="let orient of orientations" [value]="orient.value">
+                {{ orient.label }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Page Size -->
+          <div class="form-group">
+            <label for="pageSize">Page Size</label>
+            <select 
+              id="pageSize" 
+              [(ngModel)]="newTemplate.pageSize" 
+              name="pageSize"
+              class="form-control"
+            >
+              <option *ngFor="let size of pageSizes" [value]="size.value">
+                {{ size.label }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Header Text -->
+          <div class="form-group">
+            <label for="headerText">Header Text</label>
+            <input 
+              type="text" 
+              id="headerText" 
+              [(ngModel)]="newTemplate.headerText" 
+              name="headerText"
+              class="form-control" 
+              placeholder="e.g., Invoice"
+            >
+          </div>
+
+          <!-- Footer Text -->
+          <div class="form-group">
+            <label for="footerText">Footer Text</label>
+            <input 
+              type="text" 
+              id="footerText" 
+              [(ngModel)]="newTemplate.footerText" 
+              name="footerText"
+              class="form-control" 
+              placeholder="e.g., Thank you for your business"
+            >
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" (click)="cancelForm()">
+              <i class="fas fa-times"></i> Cancel
+            </button>
+            <button type="button" class="btn-secondary" (click)="saveAsNewTemplate()" *ngIf="editingId">
+              <i class="fas fa-copy"></i> Save as New
+            </button>
+            <button type="submit" class="btn-primary">
+              <i class="fas fa-save"></i> {{ editingId ? 'Update' : 'Create' }} Template
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

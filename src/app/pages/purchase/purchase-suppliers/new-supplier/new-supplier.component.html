@@ -1,0 +1,142 @@
+<div class="supplier-container">
+  <!-- Header -->
+  <div class="supplier-header">
+    <div class="header-top">
+      <h1>New Entry</h1>
+      <span class="status-badge">Draft</span>
+    </div>
+  </div>
+
+  <!-- Main Form -->
+  <div class="supplier-form">
+    <!-- Avatar & Basic Info Row -->
+    <div class="form-section-top">
+      <div class="avatar-section">
+        <div class="avatar-placeholder">
+          <img *ngIf="avatarPreview" [src]="avatarPreview" alt="Avatar" class="avatar-image">
+          <svg *ngIf="!avatarPreview" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <div class="avatar-controls">
+          <label class="btn-upload">
+            <input type="file" accept="image/*" (change)="onAvatarChange($event)" class="file-input" hidden>
+            📁 Upload
+          </label>
+          <button *ngIf="avatarPreview" class="btn-remove" (click)="removeAvatar()">🗑️ Remove</button>
+        </div>
+      </div>
+
+      <div class="basic-info">
+        <div class="form-group">
+          <label>Name <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="supplier.fullName" class="form-input" placeholder="Full Name">
+          <span class="error-message" *ngIf="!supplier.fullName">Name is required</span>
+        </div>
+
+        <div class="form-group">
+          <label>Role</label>
+          <select [(ngModel)]="supplier.role" class="form-input">
+            <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contacts Section -->
+    <div class="contacts-section">
+      <div class="section-header">
+        <h2>Contacts</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="section-content">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email <span class="required">*</span></label>
+            <input type="email" [(ngModel)]="supplier.email" class="form-input" placeholder="john@supplier.com">
+            <span class="error-message" *ngIf="supplier.email && !isValidEmail()">Valid email required</span>
+          </div>
+
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="tel" [(ngModel)]="supplier.phone" class="form-input" placeholder="Phone">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>Address</label>
+            <select [(ngModel)]="supplier.address" class="form-input">
+              <option value="">Select Address</option>
+              <option *ngFor="let lead of leads" [value]="lead">{{ lead }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Billing Section -->
+    <div class="billing-section">
+      <div class="section-header">
+        <h2>Billing</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="section-content">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Default Account</label>
+            <select [(ngModel)]="supplier.defaultAccount" class="form-input">
+              <option value="">Select Account</option>
+              <option *ngFor="let account of accounts" [value]="account">{{ account }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Currency</label>
+            <select [(ngModel)]="supplier.currency" class="form-input">
+              <option *ngFor="let curr of currencies" [value]="curr">{{ curr }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>GST Registration</label>
+            <select [(ngModel)]="supplier.gstRegistration" class="form-input">
+              <option *ngFor="let gst of gstOptions" [value]="gst">{{ gst }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- References Section -->
+    <div class="references-section">
+      <div class="section-header">
+        <h2>References</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="section-content">
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>From Lead</label>
+            <input type="text" [(ngModel)]="supplier.fromLead" class="form-input" placeholder="From Lead">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="form-actions">
+      <button class="btn btn-secondary" (click)="goBackToSuppliers()">Back to Suppliers</button>
+      <button class="btn btn-tertiary" (click)="discardSupplier()">Discard</button>
+      <button class="btn btn-primary" (click)="submitSupplier()" [disabled]="loading">
+        {{ loading ? 'Saving...' : 'Save & Submit' }}
+      </button>
+    </div>
+  </div>
+</div>

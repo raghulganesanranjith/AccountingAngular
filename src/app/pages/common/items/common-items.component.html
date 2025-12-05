@@ -1,0 +1,55 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Items</h1>
+    <button class="btn-primary" (click)="createNewItem()">
+      <i class="fas fa-plus"></i> New Item
+    </button>
+  </div>
+
+  <div class="page-content">
+    <div *ngIf="items.length === 0" class="empty-state">
+      <i class="fas fa-box"></i>
+      <h2>No Items</h2>
+      <p>Create your first item</p>
+      <button class="btn-primary" (click)="createNewItem()">
+        <i class="fas fa-plus"></i> New Item
+      </button>
+    </div>
+
+    <div *ngIf="items.length > 0" class="table-wrapper">
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>SKU</th>
+            <th>Category</th>
+            <th>Unit</th>
+            <th>Price</th>
+            <th>Tax %</th>
+            <th>Description</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of items">
+            <td><strong>{{ item.name }}</strong></td>
+            <td>{{ item.sku }}</td>
+            <td>{{ item.category }}</td>
+            <td>{{ item.unit }}</td>
+            <td class="amount">₹ {{ item.price | number: '1.2-2' }}</td>
+            <td>{{ item.tax }}%</td>
+            <td>{{ item.description }}</td>
+            <td class="actions">
+              <button class="btn-icon" (click)="editItem(item)" title="Edit">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn-icon btn-danger" (click)="deleteItem(item)" title="Delete">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,172 @@
+<div class="new-quote-container">
+  <!-- Header -->
+  <div class="quote-header">
+    <div class="header-top">
+      <h1>New Entry</h1>
+      <span class="status-badge">Draft</span>
+    </div>
+  </div>
+
+  <!-- Main Form -->
+  <div class="quote-form">
+    <!-- Number Series & Customer Row -->
+    <div class="form-row">
+      <div class="form-group">
+        <label>Number Series</label>
+        <div class="input-group">
+          <input type="text" [(ngModel)]="quote.numberSeries" class="form-input" readonly>
+          <span class="input-icon">›</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Customer</label>
+        <select [(ngModel)]="quote.customer" class="form-input">
+          <option value="">Select Customer</option>
+          <option *ngFor="let customer of customers" [value]="customer">{{ customer }}</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Date & Type Row -->
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date</label>
+        <input type="datetime-local" [(ngModel)]="quote.date" class="form-input">
+        <span class="calendar-icon">📅</span>
+      </div>
+
+      <div class="form-group">
+        <label>Type</label>
+        <select [(ngModel)]="quote.type" class="form-input">
+          <option value="Party">Party</option>
+          <option value="Individual">Individual</option>
+          <option value="Company">Company</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Items Section -->
+    <div class="items-section">
+      <div class="section-header">
+        <h2>Items</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="items-content">
+        <div class="items-label">Items</div>
+        
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Item</th>
+              <th>Tax</th>
+              <th>Quantity</th>
+              <th>Rate</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of quote.items; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>
+                <select [(ngModel)]="item.item" class="table-input">
+                  <option value="">Select Item</option>
+                  <option *ngFor="let itemName of itemList" [value]="itemName">{{ itemName }}</option>
+                </select>
+              </td>
+              <td>
+                <select [(ngModel)]="item.tax" class="table-input" (change)="calculateTotals()">
+                  <option *ngFor="let tax of taxOptions" [value]="tax">{{ tax }}</option>
+                </select>
+              </td>
+              <td>
+                <input type="number" [(ngModel)]="item.quantity" class="table-input" (change)="updateItemAmount(item)">
+              </td>
+              <td>
+                <input type="number" [(ngModel)]="item.rate" class="table-input" (change)="updateItemAmount(item)">
+              </td>
+              <td class="amount-cell">₹ {{ item.amount | number: '1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="add-row">
+          <button class="btn-add-row" (click)="addRow()">
+            <span class="plus-icon">+</span> Add Row
+          </button>
+        </div>
+
+        <div class="net-total">
+          <label>Net Total</label>
+          <div class="total-value">₹ {{ quote.netTotal | number: '1.2-2' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tax and Totals Section -->
+    <div class="tax-totals-section">
+      <div class="section-header">
+        <h2>Tax and Totals</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="tax-totals-content">
+        <div class="total-row">
+          <label>Grand Total</label>
+          <div class="total-value">₹ {{ quote.grandTotal | number: '1.2-2' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Outstanding Section -->
+    <div class="outstanding-section">
+      <div class="section-header">
+        <h2>Outstanding</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="outstanding-content">
+        <div class="outstanding-row">
+          <label>Outstanding Amount</label>
+          <div class="outstanding-value">₹ {{ quote.outstandingAmount | number: '1.2-2' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- References Section -->
+    <div class="references-section">
+      <div class="section-header">
+        <h2>References</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="references-content">
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>Notes</label>
+            <textarea [(ngModel)]="quote.notes" class="form-textarea" placeholder="Add quote terms"></textarea>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>Attachment</label>
+            <div class="attachment-input">
+              <input type="text" class="form-input" placeholder="Add attachment">
+              <span class="attachment-icon">📎</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="form-actions">
+      <button class="btn btn-secondary" (click)="goBackToQuotes()">Back to Quotes</button>
+      <button class="btn btn-tertiary" (click)="discardQuote()">Discard</button>
+      <button class="btn btn-primary" (click)="submitQuote()">Save & Submit</button>
+    </div>
+  </div>
+</div>

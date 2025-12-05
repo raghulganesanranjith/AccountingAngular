@@ -1,0 +1,273 @@
+.coa-container {
+  padding: 2rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.coa-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.coa-header h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #2563eb;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.coa-tree {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: #f9fafb;
+}
+
+.account-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: white;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.account-item:hover {
+  background: #f3f4f6;
+}
+
+.account-item:hover .account-actions {
+  display: flex;
+}
+
+.chevron {
+  width: 1.5rem;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: #6b7280;
+  user-select: none;
+}
+
+.chevron-placeholder {
+  width: 1.5rem;
+  display: inline-block;
+}
+
+.account-icon {
+  margin-right: 0.75rem;
+  font-size: 1.1rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.account-name {
+  flex: 1;
+  font-size: 0.95rem;
+  color: #1f2937;
+  user-select: none;
+}
+
+.account-name.font-semibold {
+  font-weight: 600;
+  color: #111827;
+}
+
+.account-balance {
+  margin-left: auto;
+  font-size: 0.9rem;
+  color: #6b7280;
+  font-weight: 500;
+  white-space: nowrap;
+  margin-right: 1rem;
+}
+
+.account-actions {
+  display: none;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.action-btn {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8rem;
+  background: transparent;
+  color: #3b82f6;
+  border: 1px solid #3b82f6;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+  background: #3b82f6;
+  color: white;
+}
+
+.action-btn.delete-btn {
+  color: #ef4444;
+  border-color: #ef4444;
+}
+
+.action-btn.delete-btn:hover {
+  background: #ef4444;
+  color: white;
+}
+
+.add-account-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f0f9ff;
+  border-left: 3px solid #3b82f6;
+}
+
+.add-account-input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #bfdbfe;
+  border-radius: 3px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  outline: none;
+  background: white;
+}
+
+.add-account-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.add-account-input:disabled {
+  background: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.add-account-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: 1rem;
+}
+
+.action-btn-small {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8rem;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-btn-small:hover {
+  background: #2563eb;
+}
+
+.action-btn-small:nth-child(2) {
+  background: #9ca3af;
+}
+
+.action-btn-small:nth-child(2):hover {
+  background: #6b7280;
+}
+
+.saving-indicator {
+  margin-left: 1rem;
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .coa-container {
+    padding: 1rem;
+  }
+
+  .coa-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .header-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .account-item {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .account-actions {
+    display: flex;
+  }
+
+  .action-btn {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* Scrollbar Styling */
+.coa-tree::-webkit-scrollbar {
+  width: 8px;
+}
+
+.coa-tree::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.coa-tree::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.coa-tree::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

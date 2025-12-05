@@ -1,0 +1,112 @@
+<div class="tax-templates-container">
+  <div class="tax-templates-header">
+    <div class="header-title">
+      <button class="btn-back" (click)="goBack()">← Back</button>
+      <h1>Tax Templates</h1>
+      <p class="subtitle">Create and manage tax templates for your transactions</p>
+    </div>
+    <button class="btn-add" (click)="openAddForm()">+ Add Tax Template</button>
+  </div>
+
+  <div class="tax-templates-content">
+    <div *ngIf="isLoading" class="loading">Loading tax templates...</div>
+
+    <div *ngIf="!isLoading && taxTemplates.length === 0" class="empty-state">
+      <p>No tax templates created yet. Create your first tax template to get started.</p>
+    </div>
+
+    <div *ngIf="!isLoading && taxTemplates.length > 0" class="tax-templates-list">
+      <div class="tax-template-item" *ngFor="let template of taxTemplates">
+        <div class="template-info">
+          <h3 class="template-name">{{ template.name }}</h3>
+          <p class="template-description">{{ template.description }}</p>
+          <div class="template-details">
+            <span class="detail">
+              <strong>Rate:</strong> {{ template.taxRate }}%
+            </span>
+            <span class="detail">
+              <strong>Applicable To:</strong> {{ template.applicableTo }}
+            </span>
+            <span class="detail status" [ngClass]="{'active': template.isActive, 'inactive': !template.isActive}">
+              <strong>Status:</strong> {{ template.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </div>
+        </div>
+        <div class="template-actions">
+          <button class="btn-toggle" (click)="toggleActiveStatus(template)" [title]="template.isActive ? 'Deactivate' : 'Activate'">
+            {{ template.isActive ? '✓ Active' : '○ Inactive' }}
+          </button>
+          <button class="btn-edit" (click)="editTemplate(template)">Edit</button>
+          <button class="btn-delete" (click)="deleteTemplate(template.id)">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Form -->
+  <div *ngIf="showAddForm" class="modal-overlay" (click)="cancelForm()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ editingId ? 'Edit Tax Template' : 'Create New Tax Template' }}</h2>
+        <button class="btn-close" (click)="cancelForm()">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="name">Template Name *</label>
+          <input
+            id="name"
+            type="text"
+            [(ngModel)]="newTemplate.name"
+            placeholder="e.g., GST @ 18%"
+            class="form-control"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea
+            id="description"
+            [(ngModel)]="newTemplate.description"
+            placeholder="Describe this tax template"
+            class="form-control"
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="taxRate">Tax Rate (%) *</label>
+          <input
+            id="taxRate"
+            type="number"
+            [(ngModel)]="newTemplate.taxRate"
+            placeholder="e.g., 18"
+            class="form-control"
+            min="0"
+            max="100"
+            step="0.01"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="applicableTo">Applicable To</label>
+          <select id="applicableTo" [(ngModel)]="newTemplate.applicableTo" class="form-control">
+            <option value="Sales">Sales</option>
+            <option value="Purchase">Purchase</option>
+            <option value="Both">Both</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="cancelForm()">Cancel</button>
+        <button
+          class="btn-save"
+          (click)="editingId ? updateTemplate() : createTaxTemplate()"
+        >
+          {{ editingId ? 'Update' : 'Create' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

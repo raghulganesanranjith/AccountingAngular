@@ -1,0 +1,97 @@
+.col-md-2.sidebar {
+  width: 220px;
+  background: #f5f5f5;
+  min-height: 100vh;
+  padding: 15px;
+  flex-shrink: 0;
+  border-right: 1px solid #e5e7eb;
+}
+
+.sidebar h5 {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.list-group {
+  border: none;
+}
+
+.menu-item,
+.menu-item-parent,
+.menu-item-child {
+  border: none;
+  border-left: 4px solid transparent;
+  color: #495057;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.menu-item:hover,
+.menu-item-parent:hover,
+.menu-item-child:hover {
+  background-color: #e9ecef;
+  border-left-color: #007bff;
+  color: #007bff;
+}
+
+.menu-item.active,
+.menu-item-parent.active,
+.menu-item-child.active {
+  background-color: #007bff;
+  color: white;
+  border-left-color: #0056b3;
+}
+
+.menu-item-parent {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  border-radius: 0;
+}
+
+.menu-item-parent i {
+  font-size: 0.85rem;
+  margin-left: auto;
+  transition: transform 0.3s ease;
+}
+
+.menu-item-child {
+  padding-left: 2.5rem;
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
+.menu-item-child:hover {
+  padding-left: 2.7rem;
+}
+
+.submenu {
+  max-height: 500px;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 1;
+  background-color: #ffffff;
+}
+
+.submenu-hidden {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.submenu-visible {
+  max-height: 500px;
+  opacity: 1;
+}
+
+.menu-item-group {
+  display: flex;
+  flex-direction: column;
+}

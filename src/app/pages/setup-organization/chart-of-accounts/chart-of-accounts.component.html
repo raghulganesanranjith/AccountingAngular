@@ -1,0 +1,70 @@
+<div class="coa-container">
+  <div class="coa-header">
+    <h1>Chart of Accounts</h1>
+    <div class="header-actions">
+      <button class="btn btn-primary" *ngIf="!isAllExpanded" (click)="expandAll()">
+        Expand All
+      </button>
+      <button class="btn btn-primary" *ngIf="!isAllCollapsed" (click)="collapseAll()">
+        Collapse All
+      </button>
+    </div>
+  </div>
+
+  <!-- Accounts Tree -->
+  <div class="coa-tree">
+    <div *ngFor="let account of allAccounts" class="account-item" [style]="getItemStyle(account.level!)">
+      <!-- Chevron for group accounts -->
+      <span *ngIf="account.isGroup" class="chevron" (click)="onAccountClick(account)">
+        {{ getChevronIcon(account) }}
+      </span>
+      <span *ngIf="!account.isGroup" class="chevron-placeholder"></span>
+
+      <!-- Account icon and name -->
+      <span class="account-icon">{{ getAccountIcon(account) }}</span>
+      <span class="account-name" [ngClass]="{'font-semibold': !account.parentAccount}">
+        {{ account.name }}
+      </span>
+
+      <!-- Account balance (for leaf accounts) -->
+      <span *ngIf="!account.isGroup" class="account-balance">
+        {{ getBalanceString(account) }}
+      </span>
+
+      <!-- Add Account Buttons on Hover -->
+      <div class="account-actions">
+        <button *ngIf="account.isGroup" class="action-btn" (click)="addAccount(account, 'addingAccount')">
+          Add Account
+        </button>
+        <button *ngIf="account.isGroup" class="action-btn" (click)="addAccount(account, 'addingGroupAccount')">
+          Add Group
+        </button>
+        <button class="action-btn delete-btn" (click)="deleteAccount(account)">
+          {{ account.isGroup ? 'Delete Group' : 'Delete' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Add Account/Group Input -->
+    <div *ngIf="editingParent" class="add-account-item" [style]="getItemStyle((editingParent.level! + 1))">
+      <span class="chevron-placeholder"></span>
+      <span class="account-icon">{{ editingType === 'addingGroupAccount' ? '📁' : '📄' }}</span>
+      <input
+        #inputRef
+        type="text"
+        [(ngModel)]="newAccountName"
+        (keydown)="onKeyDown($event)"
+        [disabled]="insertingAccount"
+        placeholder="New Account"
+        class="add-account-input"
+      />
+      <div class="add-account-actions" *ngIf="!insertingAccount">
+        <button class="action-btn-small" (click)="createNewAccount()">Save</button>
+        <button class="action-btn-small" (click)="cancelAddingAccount()">Cancel</button>
+      </div>
+      <div *ngIf="insertingAccount" class="saving-indicator">
+        <span>Saving...</span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,1 +1,75 @@
-/* You can add global styles to this file, and also import other style files */
+body {
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: #fff;
+  color: #222;
+}
+
+/* header like screenshot */
+.header-row {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.header-row h1 {
+  font-size:34px;
+  margin: 20px 0 8px;
+  font-weight:700;
+}
+
+/* thin black horizontal line */
+.top-sep {
+  border-top:3px solid #111;
+  margin: 12px 0 18px;
+}
+
+/* large card (homepage main) */
+.home-card {
+  background:#f3f3f3;
+  border-radius:2px;
+  padding:20px;
+  border:1px solid rgba(0,0,0,0.06);
+}
+
+/* add circle */
+.add-circle {
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  background:#1f7be4;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:600;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.05);
+  margin-right:18px;
+}
+
+/* left sidebar styling for dashboard */
+.sidebar {
+  min-height: 80vh;
+  border-right: 1px solid #eee;
+}
+.sidebar .list-group-item {
+  border:none;
+  border-radius:0;
+  padding:14px 18px;
+}
+
+/* cards on dashboard content */
+.workspace-card {
+  border:1px solid #efefef;
+  border-radius:8px;
+  padding:18px;
+  min-height:110px;
+}
+
+/* form card */
+.setup-card {
+  max-width:1000px;
+  margin: 0 auto 40px;
+  border-radius:8px;
+  border:1px solid #eee;
+  box-shadow:0 6px 18px rgba(0,0,0,0.03);
+}

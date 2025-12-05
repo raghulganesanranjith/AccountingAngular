@@ -1,0 +1,158 @@
+<div class="journal-entry-container">
+  <!-- Header -->
+  <div class="je-header">
+    <div class="header-top">
+      <h1>New Entry</h1>
+      <span class="status-badge">Draft</span>
+    </div>
+  </div>
+
+  <!-- Main Form -->
+  <div class="je-form">
+    <!-- Entry No & Number Series Row -->
+    <div class="form-row">
+      <div class="form-group">
+        <label>Entry No</label>
+        <input type="text" [(ngModel)]="journalEntry.entryNumber" class="form-input" readonly>
+      </div>
+
+      <div class="form-group">
+        <label>Number Series</label>
+        <div class="input-group">
+          <input type="text" [(ngModel)]="journalEntry.numberSeries" class="form-input" readonly>
+          <span class="input-icon">›</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Entry Type & Date Row -->
+    <div class="form-row">
+      <div class="form-group">
+        <label>Entry Type</label>
+        <select [(ngModel)]="journalEntry.entryType" class="form-input">
+          <option value="">Entry Type</option>
+          <option *ngFor="let type of entryTypes" [value]="type">{{ type }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Date</label>
+        <div class="input-group">
+          <input type="date" [(ngModel)]="journalEntry.date" class="form-input">
+          <span class="calendar-icon">📅</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Accounts Section -->
+    <div class="accounts-section">
+      <div class="section-header">
+        <h2>Accounts</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="section-content">
+        <div class="accounts-label">Account Entries</div>
+
+        <table class="accounts-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Account</th>
+              <th>Debit</th>
+              <th>Credit</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let entry of journalEntry.accountEntries; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>
+                <select [(ngModel)]="entry.account" class="table-input">
+                  <option value="">Select Account</option>
+                  <option *ngFor="let account of accounts" [value]="account">{{ account }}</option>
+                </select>
+              </td>
+              <td>
+                <input type="number" [(ngModel)]="entry.debit" class="table-input" (change)="updateAccountAmount(entry)">
+              </td>
+              <td>
+                <input type="number" [(ngModel)]="entry.credit" class="table-input" (change)="updateAccountAmount(entry)">
+              </td>
+              <td>
+                <button class="btn-delete" (click)="removeAccountEntry(i)" title="Delete">🗑️</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="add-row-section">
+          <button class="btn-add-row" (click)="addAccountEntry()">
+            <span class="plus-icon">+</span> Add Row
+          </button>
+        </div>
+
+        <!-- Totals Display -->
+        <div class="totals-row" *ngIf="journalEntry.accountEntries.length > 0">
+          <div class="total-column">
+            <span class="total-label">Total Debit:</span>
+            <span class="total-value">{{ getTotalDebit() | number: '1.2-2' }}</span>
+          </div>
+          <div class="total-column">
+            <span class="total-label">Total Credit:</span>
+            <span class="total-value">{{ getTotalCredit() | number: '1.2-2' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- References Section -->
+    <div class="references-section">
+      <div class="section-header">
+        <h2>References</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="section-content">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Reference Number</label>
+            <input type="text" [(ngModel)]="journalEntry.referenceNumber" class="form-input" placeholder="Reference Number">
+          </div>
+
+          <div class="form-group">
+            <label>Reference Date</label>
+            <div class="input-group">
+              <input type="date" [(ngModel)]="journalEntry.referenceDate" class="form-input">
+              <span class="calendar-icon">📅</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>User Remark</label>
+            <textarea [(ngModel)]="journalEntry.remark" class="form-textarea" placeholder="Add a remark"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Attachment</label>
+            <div class="attachment-input">
+              <input type="text" [(ngModel)]="journalEntry.attachment" class="form-input" placeholder="Add attachment">
+              <span class="attachment-icon">📎</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="form-actions">
+      <button class="btn btn-secondary" (click)="goBackToJournalEntry()">Back to Journal Entry</button>
+      <button class="btn btn-tertiary" (click)="discardJournalEntry()">Discard</button>
+      <button class="btn btn-primary" (click)="submitJournalEntry()" [disabled]="loading">
+        {{ loading ? 'Saving...' : 'Save & Submit' }}
+      </button>
+    </div>
+  </div>
+</div>

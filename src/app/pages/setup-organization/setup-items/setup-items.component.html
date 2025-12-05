@@ -1,0 +1,25 @@
+<div class="setup-selector-container">
+  <div class="setup-header">
+    <h1>Setup</h1>
+    <p class="setup-subtitle">Select a setup option to configure your system</p>
+  </div>
+
+  <div class="setup-grid">
+    <div
+      class="setup-card"
+      *ngFor="let item of setupItems"
+      (click)="navigateToSetup(item.route)"
+    >
+      <div class="setup-icon">
+        <i [ngClass]="item.icon"></i>
+      </div>
+      <div class="setup-content">
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.description }}</p>
+      </div>
+      <div class="setup-arrow">
+        <i class="fas fa-arrow-right"></i>
+      </div>
+    </div>
+  </div>
+</div>

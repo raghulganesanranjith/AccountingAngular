@@ -1,0 +1,41 @@
+<div class="col-md-2 sidebar">
+  <div class="p-3">
+    <h5>Menu</h5>
+    <div class="list-group mt-3">
+      <ng-container *ngFor="let item of menuItems">
+        <!-- Parent item with children -->
+        <div *ngIf="item.children" class="menu-item-group">
+          <button
+            class="list-group-item list-group-item-action menu-item-parent"
+            [class.active]="item.active"
+            (click)="onItemClick(item)"
+            type="button"
+          >
+            <span (click)="onParentLabelClick(item)">{{ item.label }}</span>
+            <i [ngClass]="item.expanded ? 'fas fa-chevron-down' : 'fas fa-chevron-right'"></i>
+          </button>
+          <!-- Child items -->
+          <div [ngClass]="{'submenu-hidden': !item.expanded, 'submenu-visible': item.expanded}" class="submenu">
+            <a
+              class="list-group-item list-group-item-action menu-item-child"
+              *ngFor="let child of item.children"
+              [class.active]="child.active"
+              [routerLink]="child.route"
+            >
+              {{ child.label }}
+            </a>
+          </div>
+        </div>
+        <!-- Regular item without children -->
+        <a
+          *ngIf="!item.children"
+          class="list-group-item list-group-item-action menu-item"
+          [class.active]="item.active"
+          [routerLink]="item.route"
+        >
+          {{ item.label }}
+        </a>
+      </ng-container>
+    </div>
+  </div>
+</div>

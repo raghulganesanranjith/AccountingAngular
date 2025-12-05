@@ -1,0 +1,25 @@
+<div class="reports-selector-container">
+  <div class="reports-header">
+    <h1>Reports</h1>
+    <p class="reports-subtitle">Select a report to view detailed information</p>
+  </div>
+
+  <div class="reports-grid">
+    <div
+      class="report-card"
+      *ngFor="let report of reports"
+      (click)="navigateToReport(report.route)"
+    >
+      <div class="report-icon">
+        <i [ngClass]="report.icon"></i>
+      </div>
+      <div class="report-content">
+        <h3>{{ report.title }}</h3>
+        <p>{{ report.description }}</p>
+      </div>
+      <div class="report-arrow">
+        <i class="fas fa-arrow-right"></i>
+      </div>
+    </div>
+  </div>
+</div>

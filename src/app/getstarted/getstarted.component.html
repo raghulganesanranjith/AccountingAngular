@@ -1,0 +1,70 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Set Up Your Workspace</h1>
+      <p class="header-subtitle">Complete the setup process to get started with your accounting system</p>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <!-- Overall Progress -->
+    <div class="progress-section">
+      <div class="progress-header">
+        <h2>Setup Progress</h2>
+        <span class="progress-text">{{ getCompletedItemsCount() }} of {{ getTotalItemsCount() }} completed</span>
+      </div>
+      <div class="progress-bar-wrapper">
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="overallProgress"></div>
+        </div>
+        <span class="progress-percentage">{{ overallProgress }}%</span>
+      </div>
+    </div>
+
+    <!-- Sections with Cards -->
+    <div class="sections-container">
+      <div *ngFor="let section of sections" class="section">
+        <h2 class="section-title">{{ section.label }}</h2>
+        
+        <div class="cards-grid">
+          <div 
+            *ngFor="let item of section.items" 
+            class="card-wrapper"
+            (mouseenter)="activeCard = item.key"
+            (mouseleave)="activeCard = null"
+          >
+            <div class="card" [class.card-completed]="item.completed">
+              <div class="card-icon" *ngIf="!item.completed">
+                <i [class]="item.icon" class="icon-lg"></i>
+              </div>
+              <div class="card-check" *ngIf="item.completed">
+                <i class="fas fa-check-circle icon-check"></i>
+              </div>
+
+              <h3 class="card-title">{{ item.label }}</h3>
+              <p class="card-description">{{ item.description }}</p>
+
+              <div class="card-actions" *ngIf="activeCard === item.key && !item.completed">
+                <button 
+                  *ngIf="item.action"
+                  class="btn-action btn-primary"
+                  (click)="executeAction(item)"
+                >
+                  Set Up
+                </button>
+                <button 
+                  *ngIf="item.documentation"
+                  class="btn-action btn-secondary"
+                  (click)="openDocumentation(item.documentation)"
+                >
+                  Documentation
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

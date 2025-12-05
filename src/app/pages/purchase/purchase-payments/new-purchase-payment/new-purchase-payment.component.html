@@ -1,0 +1,204 @@
+<div class="payment-container">
+  <!-- Header -->
+  <div class="payment-header">
+    <div class="header-top">
+      <h1>New Entry</h1>
+      <span class="status-badge">Draft</span>
+    </div>
+  </div>
+
+  <!-- Main Form -->
+  <div class="payment-form">
+    <!-- Number Series & Supplier Row -->
+    <div class="form-row">
+      <div class="form-group">
+        <label>Number Series</label>
+        <div class="input-group">
+          <input type="text" [(ngModel)]="payment.numberSeries" class="form-input" readonly>
+          <span class="input-icon">›</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Supplier</label>
+        <select [(ngModel)]="payment.supplier" class="form-input">
+          <option value="">Select Supplier</option>
+          <option *ngFor="let supplier of suppliers" [value]="supplier">{{ supplier }}</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Posting Date & Payment Type Row -->
+    <div class="form-row">
+      <div class="form-group">
+        <label>Posting Date</label>
+        <div class="input-group">
+          <input type="datetime-local" [(ngModel)]="payment.postingDate" class="form-input">
+          <span class="calendar-icon">📅</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Payment Type</label>
+        <select [(ngModel)]="payment.paymentType" class="form-input">
+          <option value="">Select Payment Type</option>
+          <option *ngFor="let type of paymentTypes" [value]="type">{{ type }}</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Details Section -->
+    <div class="details-section">
+      <div class="section-header">
+        <h2>Details</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="details-content">
+        <!-- From & To Account Row -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>From Account</label>
+            <select [(ngModel)]="payment.fromAccount" class="form-input">
+              <option value="">Select From Account</option>
+              <option *ngFor="let account of accounts" [value]="account">{{ account }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>To Account</label>
+            <select [(ngModel)]="payment.toAccount" class="form-input">
+              <option value="">Select To Account</option>
+              <option *ngFor="let account of accounts" [value]="account">{{ account }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Payment Method & Clearance Date Row -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>Payment Method</label>
+            <div class="input-group">
+              <select [(ngModel)]="payment.paymentMethod" class="form-input">
+                <option value="">Select Payment Method</option>
+                <option *ngFor="let method of paymentMethods" [value]="method">{{ method }}</option>
+              </select>
+              <span class="input-icon">›</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Clearance Date</label>
+            <input type="date" [(ngModel)]="payment.clearanceDate" class="form-input">
+            <span class="calendar-icon">📅</span>
+          </div>
+        </div>
+
+        <!-- Reference Number & Reference Date Row -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>Ref. / Cheque No.</label>
+            <input type="text" [(ngModel)]="payment.referenceNumber" class="form-input" placeholder="Ref. / Cheque No.">
+          </div>
+
+          <div class="form-group">
+            <label>Reference Date</label>
+            <input type="date" [(ngModel)]="payment.referenceDate" class="form-input">
+            <span class="calendar-icon">📅</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Amounts Section -->
+    <div class="amounts-section">
+      <div class="section-header">
+        <h2>Amounts</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="amounts-content">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Amount</label>
+            <div class="amount-display">₹ {{ payment.amount | number: '1.2-2' }}</div>
+          </div>
+
+          <div class="form-group">
+            <label>Write Off</label>
+            <div class="amount-display">₹ {{ payment.writeOff | number: '1.2-2' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment References Section -->
+    <div class="references-section">
+      <div class="section-header">
+        <h2>Payment Reference</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="references-content">
+        <table class="references-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Type</th>
+              <th>Name</th>
+              <th>Amount</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let ref of payment.paymentReferences; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>
+                <input type="text" [(ngModel)]="ref.type" class="table-input" placeholder="Type">
+              </td>
+              <td>
+                <input type="text" [(ngModel)]="ref.name" class="table-input" placeholder="Name">
+              </td>
+              <td>
+                <input type="number" [(ngModel)]="ref.amount" class="table-input" (change)="updateReferenceAmount(ref)">
+              </td>
+              <td>
+                <button class="btn-delete" (click)="removePaymentReference(i)" title="Delete">🗑️</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="add-reference">
+          <button class="btn-add-row" (click)="addPaymentReference()">
+            <span class="plus-icon">+</span> Add Row
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attachment Section -->
+    <div class="attachment-section">
+      <div class="section-header">
+        <h2>Attachment</h2>
+        <span class="collapse-icon">⌄</span>
+      </div>
+
+      <div class="attachment-content">
+        <div class="attachment-input">
+          <input type="text" [(ngModel)]="payment.attachment" class="form-input" placeholder="Add attachment">
+          <span class="attachment-icon">📎</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="form-actions">
+      <button class="btn btn-secondary" (click)="goBackToPayments()">Back to Payments</button>
+      <button class="btn btn-tertiary" (click)="discardPayment()">Discard</button>
+      <button class="btn btn-primary" (click)="submitPayment()" [disabled]="loading">
+        {{ loading ? 'Saving...' : 'Save & Submit' }}
+      </button>
+    </div>
+  </div>
+</div>
